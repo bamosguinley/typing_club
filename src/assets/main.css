@@ -1,10 +1,14 @@
-@import './base.css';
+@font-face {
+  font-family: "Playwrite";
+  src: url("@/assets/fonts/Playwrite_NG_Modern/PlaywriteNGModern-VariableFont_wght.ttf") format("trueType");
+  font-weight: bold;
+  font-style: normal;
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 a,
@@ -23,13 +27,11 @@ a,
 
 @media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    /* display: flex;
+    place-items: center; */
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    
   }
 }
