@@ -1,19 +1,29 @@
 <script setup>
 import mots from "@/assets/data";
-let url = "https://trouve-mot.fr/api/random/80"
+import { onMounted, ref } from "vue";
+let url = "https://trouve-mot.fr/api/random/80";
+let words = ref("");
 async function getWorld() {
-    
-}
-fetch("https://trouve-mot.fr/api/random/80")
+  fetch("https://trouve-mot.fr/api/random/80")
     .then((response) => response.json())
-    .then((words) => console.log(words))
+    .then((data) => {
+      //   words.value = data;
+      data.forEach((element) => {
+        words.value += element.name + " ";
+      });
+      console.log(words.value);
+    });
+}
+onMounted((param) => {
+  getWorld();
+});
 </script>
 
 <template>
   <div class="container">
     <p class="text-container">
-      <span class="word" v-for="(mot, index) in mots" :key="index">
-        {{ mot }}
+      <span :class="{}" v-for="(word, index) in words" :key="index">
+        {{ word }}
       </span>
     </p>
   </div>
@@ -24,12 +34,12 @@ fetch("https://trouve-mot.fr/api/random/80")
   height: 500px;
   border: 1px solid black;
 }
-.word{
-    margin-right: 20px;
+.word {
+  margin-left: 5px;
 }
-.text-container{
-    display: flex;
-    flex-wrap: wrap;
-    padding: 20px;
+.text-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
 }
 </style>
