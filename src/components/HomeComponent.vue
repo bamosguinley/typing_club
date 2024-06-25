@@ -7,21 +7,16 @@ const words = ref("");
 const wordsArray = ref([]);
 const userInput = ref("");
 
-// const letterRightClass = ref("letterRight")
-// const letterWrongClass = ref("letterWrong")
-// const letterClass = ref("letter")
-
 async function getWorld() {
   fetch("https://trouve-mot.fr/api/random/10")
     .then((response) => response.json())
     .then((data) => {
-      //   words.value = data;
       data.forEach((element) => {
         words.value += element.name + " ";
       });
 
       words.value.split("").forEach((letter) => {
-        wordsArray.value.push({ char: letter, isRight: "" });
+        wordsArray.value.push({ char: letter, isRight: "", tentative: 0 });
       });
 
       console.log("wordsArray", wordsArray.value);
@@ -37,10 +32,13 @@ async function getWorld() {
 let count = 0;
 function getUserInput(e) {
   if (wordsArray.value[count].char === e.key) {
-    wordsArray.value[count].isRight = "vrai";
+    wordsArray.value[count].tentative > 0
+      ? (wordsArray.value[count].isRight = "repeat")
+      : (wordsArray.value[count].isRight = "vrai");
     count++;
   } else {
     wordsArray.value[count].isRight = "faux";
+    wordsArray.value[count].tentative++;
   }
 }
 onMounted(() => {
@@ -61,11 +59,10 @@ onMounted(() => {
           letterClass: true,
           letterRight: letter.isRight === 'vrai',
           letterWrong: letter.isRight === 'faux',
+          letterRepeat: letter.isRight === 'repeat',
         }"
       >
-        <!-- <span v-for=" (letter, i) in word" :key="i" > -->
         {{ letter.char }}
-        <!-- </span> -->
       </span>
     </p>
   </div>
@@ -77,13 +74,11 @@ onMounted(() => {
   height: 500px;
   border: 1px solid black;
 }
-
 .spaceClass {
   content: " ";
   padding: 0;
   padding-left: 10px;
   width: 10px;
-  /* border-bottom: 1px solid blue; */
 }
 
 .letterClass {
@@ -92,23 +87,19 @@ onMounted(() => {
 }
 
 .letterRight {
-  /* content: " ";
-  padding: 0;
-  padding-left: 5px;
-  width: 10px; */
   background-color: greenyellow;
   border-bottom: 3px solid greenyellow;
 }
 
 .letterWrong {
-  /* content: " ";
-  padding: 0;
-  padding-left: 5px;
-  width: 10px; */
   background-color: red;
   border-bottom: 3px solid red;
 }
 
+.letterRepeat{
+  background-color: orange;
+  border-bottom: 3px solid orange;
+}
 .text-container {
   display: flex;
   flex-wrap: wrap;
