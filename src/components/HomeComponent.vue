@@ -5,16 +5,14 @@ let url = "https://trouve-mot.fr/api/random/80";
 
 const words = ref("");
 const wordsArray = ref([]);
-const text = ref("")
+const userInput = ref("");
 
-
-const letterRightClass = ref("letterRight")
-const letterWrongClass = ref("letterWrong")
-const letterClass = ref("letter")
-
+// const letterRightClass = ref("letterRight")
+// const letterWrongClass = ref("letterWrong")
+// const letterClass = ref("letter")
 
 async function getWorld() {
-  fetch("https://trouve-mot.fr/api/random/80")
+  fetch("https://trouve-mot.fr/api/random/10")
     .then((response) => response.json())
     .then((data) => {
       //   words.value = data;
@@ -22,46 +20,54 @@ async function getWorld() {
         words.value += element.name + " ";
       });
 
-      words.value.split("").forEach(letter => {
-        wordsArray.value.push({ char: letter, isRight: false })
+      words.value.split("").forEach((letter) => {
+        wordsArray.value.push({ char: letter, isRight: "" });
       });
 
       console.log("wordsArray", wordsArray.value);
 
-      // console.log("sentence => ", words.value);
-      // console.log("words array => ", wordsArray.value);
+      console.log("sentence => ", words.value);
+      console.log("words array => ", wordsArray.value);
     });
 }
 
-watch(() => {
-  console.log("rien");
-})
-
+// watch(() => {
+//   console.log("rien");
+// })
+let count = 0;
+function getUserInput(e) {
+  if (wordsArray.value[count].char === e.key) {
+    wordsArray.value[count].isRight = "vrai";
+    count++;
+  } else {
+    wordsArray.value[count].isRight = "faux";
+  }
+}
 onMounted(() => {
   getWorld();
-  document.addEventListener("keydown", (e) => {
-    console.log(e.key === " ");
-  })
+  document.addEventListener("keydown", getUserInput);
 });
-
 </script>
 
 <template>
   <div class="container">
-    <p>{{ text }}</p>
+    <p>{{ userInput }}</p>
     <p class="text-container">
-      <span v-for="(letter, index) in wordsArray" :key="index"
-        :class="{ spaceClass: letter.char === ' ', letterClass: true, letterRight: letter.isRight }">
+      <span
+        v-for="(letter, index) in wordsArray"
+        :key="index"
+        :class="{
+          spaceClass: letter.char === ' ',
+          letterClass: true,
+          letterRight: letter.isRight === 'vrai',
+          letterWrong: letter.isRight === 'faux',
+        }"
+      >
         <!-- <span v-for=" (letter, i) in word" :key="i" > -->
         {{ letter.char }}
         <!-- </span> -->
       </span>
     </p>
-  </div>
-
-
-  <div>
-    <input type="text" v-model="text">
   </div>
 </template>
 <style scoped>
@@ -77,7 +83,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 10px;
   width: 10px;
-  border-bottom: 1px solid blue;
+  /* border-bottom: 1px solid blue; */
 }
 
 .letterClass {
@@ -90,6 +96,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 5px;
   width: 10px; */
+  background-color: greenyellow;
   border-bottom: 3px solid greenyellow;
 }
 
@@ -98,6 +105,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 5px;
   width: 10px; */
+  background-color: red;
   border-bottom: 3px solid red;
 }
 
