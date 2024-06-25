@@ -14,7 +14,7 @@ const letterClass = ref("letter")
 
 
 async function getWorld() {
-  fetch("https://trouve-mot.fr/api/random/80")
+  fetch("https://trouve-mot.fr/api/random/10")
     .then((response) => response.json())
     .then((data) => {
       //   words.value = data;
@@ -77,7 +77,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 10px;
   width: 10px;
-  border-bottom: 1px solid blue;
+  /* border-bottom: 1px solid blue; */
 }
 
 .letterClass {

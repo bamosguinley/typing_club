@@ -42,6 +42,9 @@ a {
   color:#000;
   text-align: center;
 }
+a:hover {
+  color: #f99046;
+}
 
 </style>
 <script setup>

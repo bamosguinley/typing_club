@@ -1,10 +1,11 @@
-<script setup>
-import HomeComponent from "@/components/HomeComponent.vue"
+<template>
+  <div></div>
+</template>
+
+<script>
 
 </script>
 
-<template>
-  <main>
-    <home-component />
-  </main>
-</template>
+<style>
+
+</style>
