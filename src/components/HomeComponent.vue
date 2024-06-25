@@ -1,106 +1,172 @@
 <script setup>
-import mots from "@/assets/data";
-import { onMounted, ref, computed, watch } from "vue";
-let url = "https://trouve-mot.fr/api/random/80";
+import { onMounted, ref, watch } from "vue";
+import IconeTime from "./icons/IconeTime.vue";
 
 const words = ref("");
 const wordsArray = ref([]);
-const text = ref("")
+const userInput = ref("");
+const minutes = ref(0);
+const seconds = ref(0);
 
-
-const letterRightClass = ref("letterRight")
-const letterWrongClass = ref("letterWrong")
-const letterClass = ref("letter")
-
+let count = 0;
+let startCounter = ref(0);
 
 async function getWorld() {
-  fetch("https://trouve-mot.fr/api/random/10")
+  fetch("https://trouve-mot.fr/api/random/30")
     .then((response) => response.json())
     .then((data) => {
-      //   words.value = data;
-      data.forEach((element) => {
-        words.value += element.name + " ";
+      data.forEach((element, i) => {
+        if (i !== data.length - 1) {
+          words.value += element.name + " ";
+        } else {
+          words.value += element.name;
+        }
       });
 
-      words.value.split("").forEach(letter => {
-        wordsArray.value.push({ char: letter, isRight: false })
+      words.value.split("").forEach((letter) => {
+        wordsArray.value.push({ char: letter, isRight: "", tentative: 0 });
       });
 
-      console.log("wordsArray", wordsArray.value);
+      // console.log("wordsArray", wordsArray.value);
 
       // console.log("sentence => ", words.value);
       // console.log("words array => ", wordsArray.value);
     });
 }
 
-watch(() => {
-  console.log("rien");
-})
+function timer() {
+  const intervalId = setInterval(() => {
+    if (seconds.value === 60) {
+      minutes.value++;
+      seconds.value = 0;
+    } else if (seconds.value < 60) {
+      seconds.value++;
+    }
+    if (count === wordsArray.value.length - 1) clearInterval(intervalId);
+  }, 1000);
+}
+
+function formatTime(t) {
+  if (t < 10) {
+    return `0${t}`;
+  }
+  return t;
+}
+
+function getUserInput(e) {
+  if (startCounter.value < 1) {
+    startCounter.value++;
+  }
+  if (count < wordsArray.value.length) {
+    if (wordsArray.value[count].char === e.key) {
+      wordsArray.value[count].tentative > 0
+        ? (wordsArray.value[count].isRight = "repeat")
+        : (wordsArray.value[count].isRight = "vrai");
+      count++;
+    } else {
+      wordsArray.value[count].isRight = "faux";
+      wordsArray.value[count].tentative++;
+    }
+  }
+}
+
+watch(startCounter, () => {
+  console.log("watch timer");
+  timer();
+});
 
 onMounted(() => {
   getWorld();
-  document.addEventListener("keydown", (e) => {
-    console.log(e.key === " ");
-  })
+  document.addEventListener("keydown", getUserInput);
 });
-
 </script>
-
 <template>
+  <p class="start-text-container">
+    <span v-show="!startCounter">Commencez à taper</span>
+  </p>
   <div class="container">
-    <p>{{ text }}</p>
+    <p>{{ userInput }}</p>
     <p class="text-container">
-      <span v-for="(letter, index) in wordsArray" :key="index"
-        :class="{ spaceClass: letter.char === ' ', letterClass: true, letterRight: letter.isRight }">
-        <!-- <span v-for=" (letter, i) in word" :key="i" > -->
+      <span
+        v-for="(letter, index) in wordsArray"
+        :key="index"
+        :class="{
+          spaceClass: letter.char === ' ',
+          letterClass: true,
+          letterRight: letter.isRight === 'vrai',
+          letterWrong: letter.isRight === 'faux',
+          letterRepeat: letter.isRight === 'repeat',
+        }"
+      >
         {{ letter.char }}
-        <!-- </span> -->
       </span>
     </p>
   </div>
-
-
-  <div>
-    <input type="text" v-model="text">
-  </div>
+  <p class="start-text-container">
+    <IconeTime /><br />
+    <span>{{ formatTime(minutes) + " : " + formatTime(seconds) }}</span>
+  </p>
 </template>
 <style scoped>
-.container {
-  font-size: 35px;
-  width: 800px;
-  height: 500px;
-  border: 1px solid black;
+.start-text-container {
+  text-align: center;
+}
+.start-text-container span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  padding: 8px;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+  background-color: #0275d8;
 }
 
+.start-text-container svg {
+}
+
+.container {
+  font-family: "Playwrite";
+  font-size: 50px;
+  width: 90%;
+  margin: 0 auto;
+  height: fit-content;
+  box-shadow: 5px 5px 12px gray;
+}
 .spaceClass {
   content: " ";
   padding: 0;
   padding-left: 10px;
   width: 10px;
+<<<<<<< HEAD
   /* border-bottom: 1px solid blue; */
+=======
+>>>>>>> 465adca9d17fbfd4b48d75042fa1e8cfa2cfec1f
 }
-
 .letterClass {
+  padding-inline: 8px;
   padding-bottom: 0;
   margin-left: 2px;
 }
-
 .letterRight {
-  /* content: " ";
-  padding: 0;
-  padding-left: 5px;
-  width: 10px; */
-  border-bottom: 3px solid greenyellow;
+  color: green;
+  background-color: rgba(172, 255, 47, 0.3);
+  border-bottom: 3px solid rgb(120, 185, 23);
+  box-shadow: 1px 1px 1px;
 }
-
 .letterWrong {
-  /* content: " ";
-  padding: 0;
-  padding-left: 5px;
-  width: 10px; */
+  color: red;
+  background-color: rgba(255, 0, 0, 0.3);
   border-bottom: 3px solid red;
+  box-shadow: 1px 1px 1px;
 }
-
+.letterRepeat {
+  color: orange;
+  background-color: rgba(255, 166, 0, 0.3);
+  border-bottom: 3px solid orange;
+  box-shadow: 1px 1px 1px;
+}
 .text-container {
   display: flex;
   flex-wrap: wrap;
