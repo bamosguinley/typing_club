@@ -3,6 +3,7 @@ import mots from "@/assets/data";
 import { onMounted, ref } from "vue";
 let url = "https://trouve-mot.fr/api/random/80";
 let words = ref("");
+let userInput=ref('')
 async function getWorld() {
   fetch("https://trouve-mot.fr/api/random/80")
     .then((response) => response.json())
@@ -14,15 +15,21 @@ async function getWorld() {
       console.log(words.value);
     });
 }
-onMounted((param) => {
-  getWorld();
+
+function getUserInput(e) {
+  userInput.value = e.key
+}
+onMounted(() => {
+  getWorld(); 
+  document.addEventListener('keydown',getUserInput)
 });
+console.log(userInput.value);
 </script>
 
 <template>
   <div class="container">
     <p class="text-container">
-      <span :class="{}" v-for="(word, index) in words" :key="index">
+      <span :class="{ 'span-empty': word.trim() === '' }" v-for="(word, index) in words" :key="index">
         {{ word }}
       </span>
     </p>
@@ -37,9 +44,13 @@ onMounted((param) => {
 .word {
   margin-left: 5px;
 }
+.span-empty {
+  width: 5px;
+}
 .text-container {
   display: flex;
   flex-wrap: wrap;
+  word-break: break-all;
   padding: 20px;
 }
 </style>
