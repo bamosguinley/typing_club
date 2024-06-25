@@ -21,9 +21,15 @@ async function getWorld() {
       data.forEach((element) => {
         words.value += element.name + " ";
       });
-      wordsArray.value = words.value.split(" ");
-      console.log("sentence => ", words.value);
-      console.log("words array => ", wordsArray.value);
+
+      words.value.split("").forEach(letter => {
+        wordsArray.value.push({ char: letter, isRight: false })
+      });
+
+      console.log("wordsArray", wordsArray.value);
+
+      // console.log("sentence => ", words.value);
+      // console.log("words array => ", wordsArray.value);
     });
 }
 
@@ -33,6 +39,9 @@ watch(() => {
 
 onMounted(() => {
   getWorld();
+  document.addEventListener("keydown", (e) => {
+    console.log(e.key === " ");
+  })
 });
 
 </script>
@@ -41,10 +50,10 @@ onMounted(() => {
   <div class="container">
     <p>{{ text }}</p>
     <p class="text-container">
-      <span v-for="(word, index) in words" :key="index"
-        :class="{ spaceClass: word === ' ', letter: true, letterRight: true }">
+      <span v-for="(letter, index) in wordsArray" :key="index"
+        :class="{ spaceClass: letter.char === ' ', letterClass: true, letterRight: letter.isRight }">
         <!-- <span v-for=" (letter, i) in word" :key="i" > -->
-        {{ word }}
+        {{ letter.char }}
         <!-- </span> -->
       </span>
     </p>
@@ -66,14 +75,14 @@ onMounted(() => {
 .spaceClass {
   content: " ";
   padding: 0;
-  padding-left: 5px;
+  padding-left: 10px;
   width: 10px;
-  /* border-bottom: 1px solid red; */
+  border-bottom: 1px solid blue;
 }
 
-.letter {
+.letterClass {
   padding-bottom: 0;
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 .letterRight {
