@@ -123,9 +123,6 @@ onMounted(() => {
   background-color: #0275d8;
 }
 
-.start-text-container svg {
-}
-
 .container {
   font-family: "Playwrite";
   font-size: 50px;
@@ -139,10 +136,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 10px;
   width: 10px;
-<<<<<<< HEAD
   /* border-bottom: 1px solid blue; */
-=======
->>>>>>> 465adca9d17fbfd4b48d75042fa1e8cfa2cfec1f
 }
 .letterClass {
   padding-inline: 8px;

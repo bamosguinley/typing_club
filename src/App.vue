@@ -2,12 +2,11 @@
    <header class="header">
       <div><span class="logo">Win'styping</span><span class="dot">.</span></div>
       <nav class="navbar">
-        <a href="#">Accueil</a>
-        <a href="#">Se connecter</a>
+        <router-link to="/">Accueil</router-link>
+        <router-link to="/">Se connecter</router-link>
       </nav>
     </header>
-    <LandingComponentVue/>
-  <home-view />
+    <router-view />
 </template>
 
 <style scoped>

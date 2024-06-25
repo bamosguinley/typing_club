@@ -1,11 +1,13 @@
-<template>
-  <div></div>
-</template>
+<script setup>
+import LandingComponent from "@/components/LandingComponent.vue";
 
-<script>
 
 </script>
+<template>
+  <div>
+    <LandingComponent/>
+  </div>
+</template>
 
 <style>
-
 </style>

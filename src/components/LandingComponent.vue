@@ -3,12 +3,11 @@
 
 <template>
   <div>
-    
     <main>
       <div class="container">
         <div class="text-container">
           <p class="p-container">Tester votre vitesse de saisie au clavier</p>
-          <button class="btn-container">Commencer</button>
+          <router-link class="btn-container" to="/start">Commencer</router-link>
         </div>
         <div class="img-Container">
           <img src="../../public/imgcontainer.gif" alt="Home Image">

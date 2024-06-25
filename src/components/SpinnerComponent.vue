@@ -19,7 +19,7 @@ body {
   width: 100px;
   border-radius: 50%;
   border: 3px solid;
-  border-color: orange transparent;
+  border-color: rgb(3, 3, 3) transparent;
   animation: spin 1s infinite ease-out;
 }
 
