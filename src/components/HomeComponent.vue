@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import IconeTime from "./icons/IconeTime.vue";
+import ResultComponent from "./ResultComponent.vue";
 
 const words = ref("");
 const wordsArray = ref([]);
@@ -11,26 +12,26 @@ const seconds = ref(0);
 let count = 0;
 let startCounter = ref(0);
 
+const isResultVisible = ref(false);
+const resultData = ref({
+  precision: 0,
+});
+
 async function getWorld() {
-  fetch("https://trouve-mot.fr/api/random/30")
+  fetch("https://trouve-mot.fr/api/random/1")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
-        if (i !== data.length - 1) {
+        if (i < data.length - 1) {
           words.value += element.name + " ";
         } else {
           words.value += element.name;
         }
       });
-
       words.value.split("").forEach((letter) => {
         wordsArray.value.push({ char: letter, isRight: "", tentative: 0 });
       });
-
-      // console.log("wordsArray", wordsArray.value);
-
-      // console.log("sentence => ", words.value);
-      // console.log("words array => ", wordsArray.value);
+      console.log("last letter", wordsArray.value[wordsArray.value.length - 1]);
     });
 }
 
@@ -53,11 +54,21 @@ function formatTime(t) {
   return t;
 }
 
+function getPrecision() {
+  let countAttempts = 0;
+  const countChars = wordsArray.value.length - 1;
+  const attempts = wordsArray.value.map((el) => el.tentative);
+  countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
+  console.log("tableau tentatives", attempts);
+  console.log("somme tentatives", countAttempts);
+  return Math.floor(((countChars - countAttempts) * 100) / countChars);
+}
+
 function getUserInput(e) {
   if (startCounter.value < 1) {
     startCounter.value++;
   }
-  if (count < wordsArray.value.length) {
+  if (count < wordsArray.value.length - 1) {
     if (wordsArray.value[count].char === e.key) {
       wordsArray.value[count].tentative > 0
         ? (wordsArray.value[count].isRight = "repeat")
@@ -67,11 +78,17 @@ function getUserInput(e) {
       wordsArray.value[count].isRight = "faux";
       wordsArray.value[count].tentative++;
     }
+  } else {
+    displayResult();
   }
 }
 
+function displayResult() {
+  resultData.value.precision = getPrecision();
+  isResultVisible.value = true;
+}
+
 watch(startCounter, () => {
-  console.log("watch timer");
   timer();
 });
 
@@ -80,33 +97,40 @@ onMounted(() => {
   document.addEventListener("keydown", getUserInput);
 });
 </script>
+
 <template>
-  <p class="start-text-container">
-    <span v-show="!startCounter">Commencez à taper</span>
-  </p>
-  <div class="container">
-    <p>{{ userInput }}</p>
-    <p class="text-container">
-      <span
-        v-for="(letter, index) in wordsArray"
-        :key="index"
-        :class="{
-          spaceClass: letter.char === ' ',
-          letterClass: true,
-          letterRight: letter.isRight === 'vrai',
-          letterWrong: letter.isRight === 'faux',
-          letterRepeat: letter.isRight === 'repeat',
-        }"
-      >
-        {{ letter.char }}
-      </span>
+  <div v-if="isResultVisible">
+    <ResultComponent :data="resultData" />
+  </div>
+  <div v-else>
+    <p class="start-text-container">
+      <span v-show="!startCounter">Commencez à taper</span>
+    </p>
+    <div class="container">
+      <p>{{ userInput }}</p>
+      <p class="text-container">
+        <span
+          v-for="(letter, index) in wordsArray"
+          :key="index"
+          :class="{
+            spaceClass: letter.char === ' ',
+            letterClass: true,
+            letterRight: letter.isRight === 'vrai',
+            letterWrong: letter.isRight === 'faux',
+            letterRepeat: letter.isRight === 'repeat',
+          }"
+        >
+          {{ letter.char }}
+        </span>
+      </p>
+    </div>
+    <p class="start-text-container">
+      <IconeTime /><br />
+      <span>{{ formatTime(minutes) + " : " + formatTime(seconds) }}</span>
     </p>
   </div>
-  <p class="start-text-container">
-    <IconeTime /><br />
-    <span>{{ formatTime(minutes) + " : " + formatTime(seconds) }}</span>
-  </p>
 </template>
+
 <style scoped>
 .start-text-container {
   text-align: center;
@@ -124,6 +148,7 @@ onMounted(() => {
 }
 
 .container {
+  line-height: 70px;
   font-family: "Playwrite";
   font-size: 50px;
   width: 90%;
@@ -139,7 +164,7 @@ onMounted(() => {
   /* border-bottom: 1px solid blue; */
 }
 .letterClass {
-  padding-inline: 8px;
+  padding-inline: 5px;
   padding-bottom: 0;
   margin-left: 2px;
 }
