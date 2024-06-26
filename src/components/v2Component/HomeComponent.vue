@@ -6,7 +6,6 @@
 <template>
      
      <div class="container">
-          <div class="timer">00:30</div>
           <slot></slot>
      </div>
      <div class="restart">
