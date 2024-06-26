@@ -100,7 +100,6 @@ function getPrecision() {
 
 /** Calculer la vitesse */
 function getSpeed() {
-  
   const countMinutes = minutes.value + seconds.value / 60;
   return Math.floor(countWords.value / countMinutes);
 }
