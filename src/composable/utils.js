@@ -1,19 +1,17 @@
 import data from './data'
-/*
-*Récuperation les mots de façon aléatoire 
-*/
-export function getWord(position, nombreMot) {
-  position = Math.floor(Math.random() * 100);
-  for (let i = position; i < data.length; i++) {
-    if (data[i] === " ") {
-      count.value++;
-      console.log(count.value);
-    }
-    if (count <= nombreMot) {
-      data2.value += data[i];
-    }
-  }
-  console.log(data2.value);
+import { ref } from "vue";
+let data2 = ref([]);
+let count = ref(0)
+let position=0;
+// console.log(data2.value);
+function getWord(nombreMot) {
+  // Générer une position aléatoire dans le tableau data
+    let position = Math.floor(Math.random() * data.length);
+    console.log(position);
+    // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
+    data2.value = data.slice(position, position + nombreMot);
+  return data2.value;
 }
 
-getWord(5, 10);
+console.log(getWord(10));
+  
