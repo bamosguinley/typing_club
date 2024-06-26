@@ -22,7 +22,7 @@ const resultData = ref({
  * Fonction permettant d'obtenir les mots à travvers un API
  */
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/40")
+  fetch("https://trouve-mot.fr/api/random/5")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
