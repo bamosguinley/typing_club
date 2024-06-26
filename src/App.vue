@@ -3,7 +3,7 @@
       <div><router-link  class="logo" to="/">Win'styping</router-link><span class="dot">.</span></div>
       <nav class="navbar">
         <router-link to="/">Accueil</router-link>
-        <router-link to="/">Se connecter</router-link>
+        <router-link to="/login">Se connecter</router-link>
       </nav>
     </header>
     <router-view />
@@ -48,5 +48,4 @@ a:hover {
 </style>
 <script setup>
 import LandingComponentVue from "./components/LandingComponent.vue";
-
 </script>
