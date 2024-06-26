@@ -10,5 +10,4 @@ import LandingComponent from '@/components/v2Component/LandingComponent.vue';
 </template>
 
 <style scoped>
-
 </style>
