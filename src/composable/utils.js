@@ -1,6 +1,6 @@
 import data from './data'
 /*
-*Récuperation les mots de façon aléatoire 
+*Récuperation des mots de façon aléatoire 
 */
 export function getWord(position, nombreMot) {
   position = Math.floor(Math.random() * 100);
@@ -17,3 +17,7 @@ export function getWord(position, nombreMot) {
 }
 
 getWord(5, 10);
+
+export function setString(String) {
+
+}
