@@ -17,7 +17,10 @@ const props = defineProps({
     <h4>Vos statistiques :</h4>
     <p><span>Vitesse</span> : {{ props.data.speed + " mots/min" }}</p>
     <p><span>Precision</span> : {{ props.data.precision + " %" }}</p>
-    <p><span>Precision</span> : {{ props.data.time }}</p>
+    <p><span>Durée</span> : {{ props.data.time }}</p>
+  </div>
+  <div class="btn-container">
+     <a class="btn" href="">Recommencer</a>
   </div>
 </template>
 
@@ -45,6 +48,21 @@ const props = defineProps({
   background-color: #fff;
   animation: tiper 1s ease-in-out forwards;
   animation-iteration-count: 1;
+}
+.btn-container{
+  text-align: center;
+}
+.btn {
+  padding:1rem;
+  width: 12rem;
+  margin: auto;
+  text-align: center;
+  border:none;
+  border-radius:1rem;
+  background-color:#4cb7d8;
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
 }
 
 @keyframes tiper {

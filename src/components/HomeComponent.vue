@@ -8,8 +8,8 @@ const wordsArray = ref([]);
 const userInput = ref("");
 const minutes = ref(0);
 const seconds = ref(0);
-const countWords = ref(1)
-const keysToSkip = ["Shift", "CapsLock", "Dead"]
+const countWords = ref(1);
+const keysToSkip = ["Shift", "CapsLock", "Dead"];
 
 let count = 0;
 let startCounter = ref(0);
@@ -21,6 +21,9 @@ const resultData = ref({
   time: 0,
 });
 
+/**
+ * Fonction permettant d'obtenir les mots à travvers un API
+ */
 async function getWorlds() {
   fetch("https://trouve-mot.fr/api/random/1")
     .then((response) => response.json())
@@ -35,13 +38,14 @@ async function getWorlds() {
       words.value.split("").forEach((letter) => {
         wordsArray.value.push({ char: letter, isRight: "", tentative: 0 });
         // compter le nombre de mots
-        if (letter === " ") countWords.value++
+        if (letter === " ") countWords.value++;
       });
     });
 }
 
-
-
+/**
+ * Formate le temps effectué en un format mm:ss
+ */
 function formatTime(t) {
   if (t < 10) {
     return `0${t}`;
@@ -49,13 +53,11 @@ function formatTime(t) {
   return t;
 }
 
-
-
 function getUserInput(e) {
   if (startCounter.value < 1) {
     startCounter.value++;
   }
-  if (count < wordsArray.value.length - 1) {
+  if (count < wordsArray.value.length-1) {
     if (!keysToSkip.includes(e.key)) {
       if (wordsArray.value[count].char === e.key) {
         wordsArray.value[count].tentative > 0
@@ -94,14 +96,18 @@ function getPrecision() {
 }
 
 function getSpeed() {
-  const countMinutes = minutes.value + seconds.value / 60
-  return Math.floor(countWords.value / countMinutes)
+  const countMinutes = minutes.value + seconds.value / 60;
+  return Math.floor(countWords.value / countMinutes);
 }
 
 function displayResult() {
   resultData.value.precision = getPrecision();
   resultData.value.speed = getSpeed();
-  resultData.value.time = `${formatTime(minutes.value)} min ${formatTime(seconds.value)} s`;
+  resultData.value.time = `${formatTime(minutes.value)} min ${formatTime(
+    seconds.value
+  )} s`;
+  // Stopper l'écouteur d'évênements
+
   isResultVisible.value = true;
 }
 
@@ -126,13 +132,17 @@ onMounted(() => {
     <div class="container">
       <p>{{ userInput }}</p>
       <p class="text-container">
-        <span v-for="(letter, index) in wordsArray" :key="index" :class="{
-          spaceClass: letter.char === ' ',
-          letterClass: true,
-          letterRight: letter.isRight === 'vrai',
-          letterWrong: letter.isRight === 'faux',
-          letterRepeat: letter.isRight === 'repeat',
-        }">
+        <span
+          v-for="(letter, index) in wordsArray"
+          :key="index"
+          :class="{
+            spaceClass: letter.char === ' ',
+            letterClass: true,
+            letterRight: letter.isRight === 'vrai',
+            letterWrong: letter.isRight === 'faux',
+            letterRepeat: letter.isRight === 'repeat',
+          }"
+        >
           {{ letter.char }}
         </span>
       </p>
