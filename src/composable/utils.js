@@ -1,6 +1,5 @@
-import data from './data'
 
-function getWord(position, nombreMot) {
+export function getWord(position, nombreMot) {
     position = Math.floor(Math.random() * 100);
     let data2 = [];
     for (let i = position; i < data.length; i++) {
@@ -10,4 +9,4 @@ function getWord(position, nombreMot) {
   }
   
   getWord(5, 8);
-getWord(5,8)
+getWord(5, 8)
