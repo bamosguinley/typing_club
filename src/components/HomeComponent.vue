@@ -187,7 +187,7 @@ onMounted(() => {
 
 .container {
   line-height: 70px;
-  font-family: "Playwrite";
+  /* font-family: "Playwrite"; */
   font-size: 50px;
   width: 90%;
   margin: 0 auto;
