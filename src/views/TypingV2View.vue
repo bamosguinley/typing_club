@@ -1,9 +1,7 @@
-<script setup>
-import HomeComponent from '@/components/v2Component/HomeComponent.vue';
-</script>
 <template>
      <HomeComponent>
           <div class="container">
+               <TimerComponent/>
                <p class="text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora temporibus alias veniam
                     laboriosam quos
                     provident reprehenderit ducimus eveniet soluta sit nobis at maiores praesentium commodi mollitia,
@@ -22,8 +20,15 @@ import HomeComponent from '@/components/v2Component/HomeComponent.vue';
      </HomeComponent>
 
 </template>
-<style scoped>
 
+<script setup>
+import TimerComponent from "@/components/v2Component/TimerComponent.vue";
+import HomeComponent from '@/components/v2Component/HomeComponent.vue';
+    // function compareUser(params) {
+        
+    // }
+</script>
+<style scoped>
 /* style pour le text  */
 .text {
      font-size: 2rem;
@@ -32,5 +37,3 @@ import HomeComponent from '@/components/v2Component/HomeComponent.vue';
      text-align: justify;
      opacity: 0.5;     
 }
-
-</style>
