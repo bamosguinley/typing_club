@@ -14,18 +14,22 @@
 
 </script>
 <style scoped>
+/* Style pour le contenu du texte */
 .container {
      max-width: 1000px;
      width: 100%;
-     height: auto;
+     height: 300px;
      margin: 2rem auto;
      border: 1px solid red;
      background-color: #fff;
      padding: 2rem;
+     overflow: clip;
 }
+/* style pour le text  */
 .text {
      font-size: 2rem;
      font-family: Verdana, Geneva, Tahoma, sans-serif;
      line-height: 1.5;
+     
 }
 </style>
