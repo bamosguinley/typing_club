@@ -37,3 +37,4 @@ import HomeComponent from '@/components/v2Component/HomeComponent.vue';
      text-align: justify;
      opacity: 0.5;     
 }
+</style>

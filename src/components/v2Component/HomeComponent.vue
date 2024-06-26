@@ -1,4 +1,5 @@
 <script setup>
+import TimerComponent from '../v2Component/TimerComponent.vue';
     function compareUser(params) {
         
     }
@@ -6,7 +7,6 @@
 <template>
      
      <div class="container">
-          <div class="timer">00:30</div>
           <slot></slot>
      </div>
      <div class="restart">
@@ -36,9 +36,6 @@
      text-align: center;
      color: rgb(223, 113, 50);
 }
-.timer {
-     font-size: 3rem;
-     color: #df7132;
-}
+
 </style>
 
