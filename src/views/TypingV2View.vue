@@ -1,27 +1,36 @@
+
+
 <script setup>
+import TimerComponent from "@/components/v2Component/TimerComponent.vue";
 
-let min = 0;
-let sec = 0;
-
-function timing() {
-    const intervalId = setInterval(() => {
-        if(sec < 10){
-            sec = "0" + sec;
-            }
-      if(sec === 60){
-            min++;
-            sec = 0;
-        } 
-    },1000)
-    // console.log(intervalId);
-}
+    // function compareUser(params) {
+        
+    // }
 </script>
 
 <template>
-    <div id="">
+     
         
-    </div>
+         <div>
+            <TimerComponent/>
+         </div>
+     
 </template>
-<style scoped>
 
+<style scoped>
+.container {
+     max-width: 1000px;
+     width: 100%;
+     height: auto;
+     margin: 2rem auto;
+     border: 1px solid red;
+     background-color: #fff;
+     padding: 2rem;
+}
+.text {
+     font-size: 2rem;
+     font-family: Verdana, Geneva, Tahoma, sans-serif;
+     line-height: 1.5;
+}
 </style>
+
