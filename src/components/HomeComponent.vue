@@ -56,7 +56,7 @@ function getUserInput(e) {
   if (startCounter.value < 1) {
     startCounter.value++;
   }
-  if (count < wordsArray.value.length-1) {
+  if (count < wordsArray.value.length - 1) {
     if (!keysToSkip.includes(e.key)) {
       if (wordsArray.value[count].char === e.key) {
         wordsArray.value[count].tentative > 0
@@ -70,8 +70,8 @@ function getUserInput(e) {
     }
   } else {
     // supprimer les écouteurs d'évênements
-    document.removeEventListener("keydown", getUserInput)
-    document.removeEventListener("keydown", stopSpaceKeyScrolling)
+    document.removeEventListener("keydown", getUserInput);
+    document.removeEventListener("keydown", stopSpaceKeyScrolling);
     // Afficher le composant ResultComponent après la dernière frappe
     displayResult();
   }
@@ -95,7 +95,9 @@ function getPrecision() {
   const countChars = wordsArray.value.length - 1;
   const attempts = wordsArray.value.map((el) => el.tentative);
   const countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
-  return Math.floor(((countChars - countAttempts) * 100) / countChars);
+  return Math.floor(((countChars - countAttempts) * 100) / countChars) < 0
+    ? 0
+    : Math.floor(((countChars - countAttempts) * 100) / countChars);
 }
 
 /** Calculer la vitesse */
