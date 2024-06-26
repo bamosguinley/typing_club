@@ -28,40 +28,4 @@ npm run dev
 npm run build
 ```
 
-@font-face {
-font-family: "Playwrite";
-src: url("@/assets/fonts/Playwrite_NG_Modern/PlaywriteNGModern-VariableFont_wght.ttf") format("trueType");
-font-weight: bold;
-font-style: normal;
-}
 
-#app {
-display: flex;
-justify-content: center;
-align-items: center;
-}
-
-a,
-.green {
-text-decoration: none;
-color: hsla(160, 100%, 37%, 1);
-transition: 0.4s;
-padding: 3px;
-}
-
-@media (hover: hover) {
-a:hover {
-background-color: hsla(160, 100%, 37%, 0.2);
-}
-}
-
-@media (min-width: 1024px) {
-body {
-/_ display: flex;
-place-items: center; _/
-}
-
-#app {
-
-}
-}

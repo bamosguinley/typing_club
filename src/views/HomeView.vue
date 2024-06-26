@@ -1,10 +1,13 @@
 <script setup>
-import HomeComponent from "@/components/HomeComponent.vue"
+import LandingComponent from "@/components/LandingComponent.vue";
+
 
 </script>
-
 <template>
-  <main>
-    <home-component />
-  </main>
+  <div>
+    <LandingComponent/>
+  </div>
 </template>
+
+<style>
+</style>

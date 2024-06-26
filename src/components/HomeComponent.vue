@@ -18,7 +18,7 @@ const resultData = ref({
 });
 
 async function getWorld() {
-  fetch("https://trouve-mot.fr/api/random/1")
+  fetch("https://trouve-mot.fr/api/random/30")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
@@ -162,6 +162,7 @@ onMounted(() => {
   padding: 0;
   padding-left: 10px;
   width: 10px;
+  /* border-bottom: 1px solid blue; */
 }
 .letterClass {
   padding-inline: 5px;
