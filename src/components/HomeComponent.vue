@@ -21,7 +21,7 @@ const resultData = ref({
 });
 
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/30")
+  fetch("https://trouve-mot.fr/api/random/1")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {

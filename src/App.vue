@@ -1,6 +1,6 @@
 <template>
    <header class="header">
-      <div><span class="logo">Win'styping</span><span class="dot">.</span></div>
+      <div><router-link  class="logo" to="/">Win'styping</router-link><span class="dot">.</span></div>
       <nav class="navbar">
         <router-link to="/">Accueil</router-link>
         <router-link to="/">Se connecter</router-link>

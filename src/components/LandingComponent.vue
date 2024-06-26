@@ -50,6 +50,7 @@
   background-color:#4cb7d8;
   color: #fff;
   font-size: 1rem;
+  text-decoration: none;
 }
 .btn-container:hover{
   background-color: #2c81c7;
