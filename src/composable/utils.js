@@ -1,12 +1,19 @@
-
+import data from './data'
+/*
+*Récuperation les mots de façon aléatoire 
+*/
 export function getWord(position, nombreMot) {
-    position = Math.floor(Math.random() * 100);
-    let data2 = [];
-    for (let i = position; i < data.length; i++) {
-      data2 += data[i];
+  position = Math.floor(Math.random() * 100);
+  for (let i = position; i < data.length; i++) {
+    if (data[i] === " ") {
+      count.value++;
+      console.log(count.value);
     }
-    console.log(data2);
+    if (count <= nombreMot) {
+      data2.value += data[i];
+    }
   }
-  
-  getWord(5, 8);
-getWord(5, 8)
+  console.log(data2.value);
+}
+
+getWord(5, 10);
