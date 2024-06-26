@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import IconeTime from "./icons/IconeTime.vue";
@@ -238,4 +236,3 @@ onMounted(() => {
   padding: 20px;
 }
 </style>
->>>>>>> 5a5bddb4258f74d3523153859651fc0c9ca45444
