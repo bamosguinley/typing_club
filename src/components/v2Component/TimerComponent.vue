@@ -21,18 +21,42 @@
 <script setup>
 import { ref } from "vue";
 
-        const minutes = ref("0" + 0);
-        const secondes = ref(30);
+        const minutes = ref("0" + 2);
+const secondes = ref(59);
 
-       const intervalId = setInterval(() => {
-            secondes.value --;
-            if(secondes.value < 10) {
-                secondes.value = "0" + secondes.value
-            }
-            if (secondes.value == 0){
-                clearInterval(intervalId)
-            }
-        }, 1000)
+const intervalId = setInterval(() => {
+    secondes.value--;
+
+    if (secondes.value < 10) {
+        secondes.value = "0" + secondes.value;
+    }
+    // if (minutes.value < 10) {
+    //     // minutes.value = "0" + minutes.value;
+    // }
+    if (secondes.value == 0) {
+        minutes.value = "0" + minutes.value
+        minutes.value--;
+        // secondes.value = ; 
+    }
+
+    if (minutes.value == 0 && secondes.value == "00") {
+        clearInterval(intervalId);
+     }
+}, 1000);
+
+            
+            
+                // minutes.value == 0;
+                // secondes.value == 0;
+                // clearInterval(intervalId);
+            
+            // if (secondes.value == 0) {
+            //     clearInterval(intervalId)
+            // }
+            // if (minutes.value == 0) {
+            //     clearInterval(intervalId)
+            // }
+        // }, 1000)
 
 </script>
 
