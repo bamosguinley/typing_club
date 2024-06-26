@@ -1,5 +1,4 @@
 <script setup>
-import mots from "@/assets/data";
 import { onMounted, ref } from "vue";
 let url = "https://trouve-mot.fr/api/random/80";
 let words = ref("");
