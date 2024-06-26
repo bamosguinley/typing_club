@@ -7,7 +7,7 @@
     </div>
     <nav class="navbar">
       <router-link to="/">Accueil</router-link>
-      <router-link to="/login">Se connecter</router-link>
+      <router-link to="/version2">Version 2</router-link>
     </nav>
   </header>
   <!-- Header end -->
