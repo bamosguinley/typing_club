@@ -1,4 +1,5 @@
-<template>
-    
-    
-</template>
+<script setup>
+    function compareUser(params) {
+        
+    }
+</script>
