@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
   <div>
     <main>
@@ -10,7 +7,7 @@
           <router-link class="btn-container" to="/start">Commencer</router-link>
         </div>
         <div class="img-Container">
-          <img src="../../public/imgcontainer.gif" alt="Home Image">
+          <img src="/imgcontainer.gif" alt="Home Image">
         </div>
       </div>
     </main>
@@ -50,6 +47,7 @@
   background-color:#4cb7d8;
   color: #fff;
   font-size: 1rem;
+  text-decoration: none;
 }
 .btn-container:hover{
   background-color: #2c81c7;
