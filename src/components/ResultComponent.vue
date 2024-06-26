@@ -1,12 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
-
-
-onMounted(async () => {
-
-})
-
-
+// Récupération des données de la session de frappe par la props data
 const props = defineProps({
   data: Object,
 });
@@ -25,19 +18,6 @@ const props = defineProps({
 </template>
 
 <style scoped>
-/* .result-container {
-  padding: 80px;
-  font-family: "Playwrite";
-  font-size: 25px;
-  margin: 50px auto;
-  border-radius: 60%;
-  box-shadow: 5px 5px 12px gray;
-  background-color: #fff;
-  animation: mymove 5s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-in-out;
-} */
-
 .result-container {
   padding: 80px;
   font-family: "Playwrite";
@@ -66,7 +46,6 @@ const props = defineProps({
 }
 
 @keyframes tiper {
-
   0%,
   20%,
   50%,
@@ -83,7 +62,6 @@ const props = defineProps({
     transform: translateY(0px);
   }
 }
-
 
 .result-container h4 {
   text-decoration: double;

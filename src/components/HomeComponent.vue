@@ -5,15 +5,12 @@ import ResultComponent from "./ResultComponent.vue";
 
 const words = ref("");
 const wordsArray = ref([]);
-const userInput = ref("");
 const minutes = ref(0);
 const seconds = ref(0);
 const countWords = ref(1);
 const keysToSkip = ["Shift", "CapsLock", "Dead"];
-
 let count = 0;
 let startCounter = ref(0);
-
 const isResultVisible = ref(false);
 const resultData = ref({
   precision: 0,
@@ -25,7 +22,7 @@ const resultData = ref({
  * Fonction permettant d'obtenir les mots à travvers un API
  */
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/1")
+  fetch("https://trouve-mot.fr/api/random/40")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
@@ -35,6 +32,7 @@ async function getWorlds() {
           words.value += element.name;
         }
       });
+      // retourne les lettres des sous forme d'objets dans le tableau wordsArray
       words.value.split("").forEach((letter) => {
         wordsArray.value.push({ char: letter, isRight: "", tentative: 0 });
         // compter le nombre de mots
@@ -54,6 +52,7 @@ function formatTime(t) {
 }
 
 function getUserInput(e) {
+  // Détecter la toute première frappe
   if (startCounter.value < 1) {
     startCounter.value++;
   }
@@ -61,19 +60,24 @@ function getUserInput(e) {
     if (!keysToSkip.includes(e.key)) {
       if (wordsArray.value[count].char === e.key) {
         wordsArray.value[count].tentative > 0
-          ? (wordsArray.value[count].isRight = "repeat")
-          : (wordsArray.value[count].isRight = "vrai");
+          ? (wordsArray.value[count].isRight = "succesAfterManyAttempts")
+          : (wordsArray.value[count].isRight = "successAfterOneAttempt");
         count++;
       } else {
-        wordsArray.value[count].isRight = "faux";
+        wordsArray.value[count].isRight = "failed";
         wordsArray.value[count].tentative++;
       }
     }
   } else {
+    // supprimer les écouteurs d'évênements
+    document.removeEventListener("keydown", getUserInput)
+    document.removeEventListener("keydown", stopSpaceKeyScrolling)
+    // Afficher le composant ResultComponent après la dernière frappe
     displayResult();
   }
 }
 
+/** Compter le temps en minutes et en secondes */
 function timer() {
   const intervalId = setInterval(() => {
     if (seconds.value === 60) {
@@ -86,20 +90,21 @@ function timer() {
   }, 1000);
 }
 
+/** Calculer la précision */
 function getPrecision() {
   const countChars = wordsArray.value.length - 1;
   const attempts = wordsArray.value.map((el) => el.tentative);
   const countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
-  // console.log("tableau tentatives", attempts);
-  // console.log("somme tentatives", countAttempts);
   return Math.floor(((countChars - countAttempts) * 100) / countChars);
 }
 
+/** Calculer la vitesse */
 function getSpeed() {
   const countMinutes = minutes.value + seconds.value / 60;
   return Math.floor(countWords.value / countMinutes);
 }
 
+// Afficher le composant ResultComponent
 function displayResult() {
   resultData.value.precision = getPrecision();
   resultData.value.speed = getSpeed();
@@ -111,18 +116,28 @@ function displayResult() {
   isResultVisible.value = true;
 }
 
+// Lancer le counter à la première frappe
 watch(startCounter, () => {
   timer();
 });
 
+/** Empêcher défilement à la frappe de la touche Space */
+function stopSpaceKeyScrolling(e) {
+  if (e.code == "Space" && e.target == document.body) {
+    e.preventDefault();
+  }
+}
+
 onMounted(() => {
   getWorlds();
+  window.addEventListener("keydown", stopSpaceKeyScrolling);
   document.addEventListener("keydown", getUserInput);
 });
 </script>
 
 <template>
   <div v-if="isResultVisible">
+    <!-- resultData est l'objet contenant la vitesse, la précision et la durée de la session -->
     <ResultComponent :data="resultData" />
   </div>
   <div v-else>
@@ -130,7 +145,6 @@ onMounted(() => {
       <span v-show="!startCounter">Commencez à taper</span>
     </p>
     <div class="container">
-      <p>{{ userInput }}</p>
       <p class="text-container">
         <span
           v-for="(letter, index) in wordsArray"
@@ -138,9 +152,9 @@ onMounted(() => {
           :class="{
             spaceClass: letter.char === ' ',
             letterClass: true,
-            letterRight: letter.isRight === 'vrai',
-            letterWrong: letter.isRight === 'faux',
-            letterRepeat: letter.isRight === 'repeat',
+            letterRight: letter.isRight === 'successAfterOneAttempt',
+            letterWrong: letter.isRight === 'failed',
+            letterRepeat: letter.isRight === 'succesAfterManyAttempts',
           }"
         >
           {{ letter.char }}
@@ -187,7 +201,6 @@ onMounted(() => {
   padding: 0;
   padding-left: 10px;
   width: 10px;
-  /* border-bottom: 1px solid blue; */
 }
 
 .letterClass {

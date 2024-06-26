@@ -2,9 +2,6 @@
   <div class="box"></div>
 </template>
 
-<script setup>
-</script>
-
 <style scoped>
 body {
   background-color: #ffffff;
