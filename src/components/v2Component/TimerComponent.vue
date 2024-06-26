@@ -20,9 +20,9 @@ const secondes = ref(30);
 
 const intervalId = setInterval(() => {
     secondes.value--;  //Décrémentation des secondes
-    if (secondes.value < 10) {
-        secondes.value = "0" + secondes.value //Formatage des secondes en ajoutant un 0 si les secondes sont inferieures à 10
-    }
+    // if (secondes.value < 10) {
+    //     secondes.value = secondes.value //Formatage des secondes en ajoutant un 0 si les secondes sont inferieures à 10
+    // }
     if (secondes.value == 0) {
         clearInterval(intervalId) // si les secondes viennent à zero la fonction Setinterval s'arrête
     }
