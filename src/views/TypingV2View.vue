@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+<script setup>
+    function compareUser(params) {
+        
+    }
+</script>
+=======
 <template>
      <div class="container">
           <p class="text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora temporibus alias veniam laboriosam quos
@@ -33,3 +40,4 @@
      
 }
 </style>
+>>>>>>> 3bd1e8077d5df36bf61b87d6c6bd43b9447d9f34
