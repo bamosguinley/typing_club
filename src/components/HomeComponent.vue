@@ -18,6 +18,7 @@ const isResultVisible = ref(false);
 const resultData = ref({
   precision: 0,
   speed: 0,
+  time: 0,
 });
 
 async function getWorlds() {
@@ -100,6 +101,7 @@ function getSpeed() {
 function displayResult() {
   resultData.value.precision = getPrecision();
   resultData.value.speed = getSpeed();
+  resultData.value.time = `${formatTime(minutes.value)} min ${formatTime(seconds.value)} s`;
   isResultVisible.value = true;
 }
 
