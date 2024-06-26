@@ -155,6 +155,7 @@ onMounted(() => {
   margin: 0 auto;
   height: fit-content;
   box-shadow: 5px 5px 12px gray;
+  background-color: #fff;
 }
 .spaceClass {
   content: " ";
