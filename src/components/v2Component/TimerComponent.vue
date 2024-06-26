@@ -1,6 +1,6 @@
 <template>
 
-    <div class="container">
+  
         <div class="timer">
             <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#df7132">
                 <path
@@ -9,7 +9,6 @@
             {{ minutes + ":" }}{{ secondes + "" }}
         </div>
 
-    </div>
 </template>
 
 <script setup>
