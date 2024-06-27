@@ -1,11 +1,20 @@
 <script setup>
 import TimerComponent from '../v2Component/TimerComponent.vue';
-  
+import {ref} from "vue"
         const refreshPage = ()=>{
           location.reload();
+          const newRandmWord = getWord(50);
+          setString(newRandmWord)
+          
         }
 import getWord from '@/composable/utils'
 let words = getWord(50)
+
+import { setString, getString } from '@/composable/utils.js';
+
+setString(words); let p =getString();
+console.log("setString :"+ p);
+
 </script>
 <template>
   <div class="container">

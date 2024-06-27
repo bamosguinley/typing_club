@@ -1,12 +1,14 @@
 import data from './data'
-import { ref } from "vue";
+import {ref} from "vue"
 let data2 = ref([]);
 let data3 = ref([]);
 
 let count = ref(0)
 let position=0;
 // console.log(data2.value);
- const getWord= ((nombreMot)=> {
+
+
+const getWord = (nombreMot) => {
   // Générer une position aléatoire dans le tableau data
     let position = Math.floor(Math.random() * data.length);
     console.log(position);
@@ -16,8 +18,16 @@ let position=0;
      data3.value += el+' ';
    });
   return data3.value;
-})
+};
 
+export function setString(data3){
+  localStorage.setItem("randomWord", data3);
+} ;
+
+export function getString(){ 
+  const storedWord = localStorage.getItem("randomWord");
+  return storedWord
+};
 
 // Fonction pour un décompteur de 3 minutes
 export function countdown() {
@@ -44,4 +54,5 @@ export function countdown() {
     return formattedTime;
 }
 export default getWord;
+
   
