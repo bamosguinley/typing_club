@@ -20,16 +20,14 @@ Fonction permettant de décompter pendant 03min 00sec
 */
 // Déclaration des constantes
 
-const minutes = ref(1);
+const minutes = ref(3);
 const secondes = ref("0" + 0);
 
 // stockage de la fonction setInterval dans une variable 
 
     const intervalId = setInterval(() => {
-        if () {
-            
-        }
-    secondes.value--; // Décrémentation des secondes
+       
+            secondes.value--; // Décrémentation des secondes
     if (secondes.value == -1) { // si la valeur des secondes est égale à -1 , 
         secondes.value == 0; // on la ramène à 0;
         secondes.value = 59; // ensuite à 60;
@@ -48,11 +46,13 @@ const secondes = ref("0" + 0);
         // window.location.href = "http://localhost:5173/version2/start/result"; 
     }
 
+        }
+    
     // if(secondes.value == 0 && minutes.value == 0) {
     //   
     // }
 
-}, 1000);
+, 1000);
 
 
 
