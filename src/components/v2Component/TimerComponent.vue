@@ -24,7 +24,8 @@ const minutes = ref(3);
 const secondes = ref("0" + 0);
 
 // stockage de la fonction setInterval dans une variable 
-const intervalId = setInterval(() => {
+
+    const intervalId = setInterval(() => {
     secondes.value--; // Décrémentation des secondes
     if (secondes.value == -1) { // si la valeur des secondes est égale à -1 , 
         secondes.value == 0; // on la ramène à 0;
@@ -41,15 +42,14 @@ const intervalId = setInterval(() => {
         minutes.value = 0;
         secondes.value = "0" + 0;
     }
+
     // if(secondes.value == 0 && minutes.value == 0) {
     //     emit("sendResult", Sender.value)
     // }
 
 }, 1000);
 
-function Sender () {
 
-}
 
 </script>
 

@@ -1,6 +1,8 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
+import ResultComponent from "../v2Component/ResultComponent.vue";
 import { onMounted, ref } from "vue";
+
 // Les variables
 const counting = ref(false);
 const refreshPage = () => {
@@ -22,6 +24,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="container">
+    <ResultComponent />
     <TimerComponent v-if="counting" />
     <span class="text" v-for="(word, index) in words" :key="index">
       <span v-for="(letter, index) in word" :key="index">
