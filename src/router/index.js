@@ -13,6 +13,11 @@ const router = createRouter({
       component: () => import("../views/StartView.vue"),
     },
     {
+      path: "/starting",
+      name: "starting",
+      component: () => import("../components/HomeComponent.vue")
+    },
+    {
       path: "/version2",
       name: "version2",
       component: () => import("../views/TypingV2View.vue"),

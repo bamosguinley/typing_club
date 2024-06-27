@@ -24,6 +24,7 @@ const props = defineProps({
   font-size: 25px;
   margin: 50px auto;
   border-radius: 60%;
+  width: fit-content;
   box-shadow: 5px 5px 12px gray;
   background-color: #fff;
   animation: tiper 1s ease-in-out forwards;

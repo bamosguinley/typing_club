@@ -142,7 +142,7 @@ onMounted(() => {
   </div>
   <div v-else>
     <p class="start-text-container">
-      <span v-show="!startCounter">Commencez à taper</span>
+      <span>Commencez à taper</span>
     </p>
     <div class="container">
       <p class="text-container">

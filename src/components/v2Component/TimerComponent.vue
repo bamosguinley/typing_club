@@ -44,9 +44,9 @@ const secondes = ref("0" + 0);
     }
   
     if (minutes.value == -1) {
-        // minutes.value = 0;
-        // secondes.value = "0" + 0;
-        emit("sendResult", minutes.value )
+        minutes.value = 0;
+        secondes.value = "0" + 0;
+        // emit("sendResult", minutes.value )
         // window.location.href = "http://localhost:5173/version2/start/result"; 
     }
 

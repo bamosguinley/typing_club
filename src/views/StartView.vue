@@ -1,8 +1,9 @@
 <script setup >
-import HomeComponent from "@/components/HomeComponent.vue";
+// import HomeComponent from "@/components/HomeComponent.vue";
+import PageDeBord from "../components/PageDeBord.vue"
 import SpinnerComponent from "@/components/SpinnerComponent.vue";
 import { onMounted, ref } from "vue";
-let isloadingTimeOut = ref(false);
+let isloadingTimeOut = ref(true);
 
 onMounted(() => {
   // Afficher l'interface de frappe deux secondes après le chargement de la vue
@@ -15,7 +16,7 @@ onMounted(() => {
 <template>
   <div class="container">
     <spinner-component v-if="isloadingTimeOut === false" class="spinner" />
-    <HomeComponent v-if="isloadingTimeOut === true" />
+    <PageDeBord v-if="isloadingTimeOut === true" />
   </div>
 </template>
 
