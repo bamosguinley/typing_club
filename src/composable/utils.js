@@ -22,24 +22,22 @@ const getWord = ((nombreMot) => {
   dataAleatoire.value = data2.value.slice(position, position + nombreMot);
   console.log("Mots extraits avant filtrage :", dataAleatoire.value);
   // Parcours les mots extraits
-  data3.value = ""; // Réinitialiser data3.value
+  data3.value = []; // Réinitialiser data3.value en tant que tableau
   dataAleatoire.value.forEach(el => {
     let containsRefusedChar = false;
-    // Vérifie si le mot contient un caractère refusé
+    // Vérifier si le mot contient un caractère refusé
     for (let char of el) {
       if (refusedChar.includes(char)) {
         containsRefusedChar = true;
         break;
       }
     }
-    // Ajoute le mot à data3.value seulement s'il ne contient pas de caractère refusé
+    // Ajouter le mot à data3.value seulement s'il ne contient pas de caractère refusé
     if (!containsRefusedChar) {
-      data3.value += el + ' ';
+      data3.value.push(el);
     }
   });
-
-  console.log("Mots filtrés :", data3.value);
-  return data3.value.trim(); // Retourner data3.value sans espaces de fin
+  return data3.value.join(' '); // Retourner data3.value en tant que tableau
 });
 
 // export default getWord;
