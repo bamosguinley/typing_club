@@ -1,32 +1,49 @@
 <template>
-  <span v-for="el in data2" :key="el.index">
-    {{ el }}
-  </span>
+<p v></p>
+  
 </template>
 
 <script setup>
-/**
- * l'importation  du fichier data(contient lest mot que l'on va affivhier lors de saisir) 
- */
-import data from "@/composable/data";
-import { ref } from "vue";
-console.log(data);
-/**data2 est le nouveau tableau qui va nous permettre de recuper une portion des mot de notre data */
-let data2 = ref([]);
-let count = ref(0)
-let position=0;
-// console.log(data2.value);
-function getWord(nombreMot) {
-  // Générer une position aléatoire dans le tableau data
-    let position = Math.floor(Math.random() * data.length);
-    console.log(position);
-    // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
-    data2.value = data.slice(position, position + nombreMot);
-  return data2.value;
+import data from "@/composable/data"
+
+function getWord(position, nombreMot) {
+  position = Math.floor(Math.random() * 100);
+  let data2 = [];
+  for (let i = position; i < data.length; i++) {
+    data2 += data[i];
+  }
+  console.log(data2);
 }
 
-console.log(getWord(10));
-</script>
+getWord(5, 8);
 
+</script>
+<template>
+  <div class="container">
+      <TimerComponent />
+      <span class="text" v-for="(word,index) in words" :key="index">
+            <span v-for="(letter,index) in word" :key="index">
+                {{ letter }}
+            </span>
+      </span>
+    </div>
+  <div class="restart">
+    <a href="#" @click="refreshPage">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="60px"
+        viewBox="0 -960 960 960"
+        width="60px"
+        fill="#df7132"
+      >
+        <path
+          d="M440-122q-121-15-200.5-105.5T160-440q0-66 26-126.5T260-672l57 57q-38 34-57.5 79T240-440q0 88 56 155.5T440-202v80Zm80 0v-80q87-16 143.5-83T720-440q0-100-70-170t-170-70h-3l44 44-56 56-140-140 140-140 56 56-44 44h3q134 0 227 93t93 227q0 121-79.5 211.5T520-122Z"
+        />
+      </svg>
+    </a>
+  </div>
+</template>
 <style scoped>
+
 </style>
+
