@@ -1,18 +1,20 @@
 import data from "./data";
-import { ref } from "vue";
-let data2 = ref([]);
-let data3 = ref([]);
-let dataAleatoire = ref([]);
 
-let count = ref(0);
-const refusedChar = ["œ", "Æ"];
 
-// Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
-data.forEach((element) => {
-  data2.value = data2.value.concat(element.split(/\s/));
-});
 
-const getWord = (nombreMot) => {
+export const getWord = (nombreMot) => {
+
+  let data2 = ref([]);
+  let data3 = ref([]);
+  let dataAleatoire = ref([]);
+  let count = ref(0);
+  const refusedChar = ["œ", "Æ"];
+
+  // Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
+  data.forEach((element) => {
+    data2.value = data2.value.concat(element.split(/\s/));
+  });
+
   // Génére une position aléatoire dans le tableau data2.value
   let position = Math.floor(
     Math.random() * (data2.value.length - nombreMot + 1)
@@ -39,14 +41,6 @@ const getWord = (nombreMot) => {
   });
   return data3.value; // Retourner data3.value en tant que tableau
 }
-// FONCTIONS DE CALCULS DE LA PRECISION
- export function getTime(minutes,secondes){
-  time =minutes + secondes/60;
-  return time;
-}
-
-
-
 
 // export default getWord;
 
@@ -64,9 +58,7 @@ export const chrono = function countdown() {
     // Formatage en mm:ss
     const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
     const formattedSeconds = (seconds < 10 ? "0" : "") + seconds;
-
     formattedTime = `${formattedMinutes}:${formattedSeconds}`;
-
     if (totalSeconds <= 0) {
       clearInterval(intervalId); // Arrête le décompteur une fois le temps écoulé
     } else {
@@ -77,7 +69,7 @@ export const chrono = function countdown() {
   return formattedTime;
 };
 
-export default getWord;
+
 
 /*
  *Stocker les données
