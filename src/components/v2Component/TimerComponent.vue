@@ -18,10 +18,14 @@ const emit = defineEmits(["sendResult"])
 /*
 Fonction permettant de décompter pendant 03min 00sec
 */
-// Déclaration des constantes
+// Declaration des constantes
 
+const count = ref(0);
 const minutes = ref(3);
 const secondes = ref("0" + 0);
+
+
+
 
 // stockage de la fonction setInterval dans une variable 
 
@@ -57,6 +61,7 @@ const secondes = ref("0" + 0);
 
 
 </script>
+
 
 <style scoped>
 .timer {
