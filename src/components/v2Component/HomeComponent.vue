@@ -1,24 +1,24 @@
 <script setup>
-import TimerComponent from '../v2Component/TimerComponent.vue';
-import { onMounted, ref } from 'vue';
-        const refreshPage = ()=>{
-          location.reload();
-        }
-import getWord from '@/composable/utils'
+import TimerComponent from "../v2Component/TimerComponent.vue";
+import { onMounted, ref } from "vue";
+const refreshPage = () => {
+  location.reload();
+};
+import getWord from "@/composable/utils";
 
-let words = getWord(50) //Mots récupérés de façon aléatoire
-let wordObject = ref([]) //Initialiser un tableau d'objet mot
+let words = getWord(50); //Mots récupérés de façon aléatoire
+let wordObject = ref([]); //Initialiser un tableau d'objet mot
 // console.log(words);
 /**
  * Ajouter chaque objet mot au tableau wordObject
  */
-words.forEach(el => {
-  wordObject.value.push({ mot: el+' ', isFinding:''})
+words.forEach((el) => {
+  wordObject.value.push({ mot: el + " ", isFinding: "" });
 });
 
 /**
  * Stocker localement les mots actuel
- * @param word 
+ * @param word
  */
 function storeRandomWord(word) {
   localStorage.setItem("randomWord", word);
@@ -31,36 +31,75 @@ console.log(storedWord);
 console.log(storeRandomWord(wordObject));
 console.log(wordObject.value);
 
-
-const wordCounter = ref(1);
-const letterCounter = ref(1);
-
+const counting = ref(false);
+const wordCounter = ref(0);
+const letterCounter = ref(0);
 
 /**
  * Récupérer la frappe au clavier et qui gère le declenchement du timer
- * @param e 
+ * @param e
  */
 function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
+
   console.log(e.key);
+
+  // Vérifie si wordCounter est inférieur à la longueur totale des mots
+  if (wordCounter.value < wordObject.value.length) {
+    // Récupère le mot actuel à tester
+    let currentWord = wordObject.value[wordCounter.value].mot;
+    
+    // Vérifie si letterCounter est inférieur à la longueur du mot actuel
+    if (letterCounter.value < currentWord.length) {
+      // Récupère la lettre attendue dans le mot actuel
+      let expectedLetter = currentWord.charAt(letterCounter.value);
+
+      // Compare la lettre entrée avec la lettre attendue
+      if (e.key === expectedLetter) {
+
+        console.log("Exact");
+        // Si la lettre est correcte, passe à la lettre suivante
+        letterCounter.value++;
+
+        // Vérifie si toutes les lettres du mot ont été vérifiées
+        if (letterCounter.value === currentWord.length) {
+            wordObject.value[wordCounter.value].isFinding=true
+          console.log("Mot complet: " + currentWord);
+          // Passe au mot suivant
+          wordCounter.value++;
+          letterCounter.value = 0; // Réinitialise pour le nouveau mot
+        }
+      } else {
+        console.log("Incorrect");
+        // Gérer l'erreur si la lettre est incorrecte (optionnel)
+      }
+    }
+  }
+
+  // Si wordCounter a atteint la fin des mots
+  if (wordCounter.value === wordObject.value.length) {
+    console.log("Tous les mots ont été vérifiés.");
+    // Gérer la fin de la vérification des mots (optionnel)
+  }
 }
+
 //Ecouter la frappe dès le chargement de la page
 onMounted(() => {
   document.addEventListener("keydown", Input);
 });
-if (wordCounter) {
-  
-}
-
 </script>
 <template>
   <div class="container">
-      <TimerComponent />
-      <span class="text" v-for="(word,index) in wordObject" :key="index">
-           {{word.mot}}
+    <TimerComponent v-if="counting" />
+    <span class="text" v-for="(word, index) in wordObject" :key="index"  :class="{
+           writeWord: word.isFinding === 'vrai',
+          }">
+      <span v-for="(letter, index) in word" :key="index">
+        {{ letter }}
       </span>
+    </span>
   </div>
   <div class="restart">
     <a href="#" @click="storeRandomWord(wordObject)">
@@ -76,9 +115,6 @@ if (wordCounter) {
         />
       </svg>
     </a>
-  </div>
-  <div class="v-else">
-
   </div>
 </template>
 <style scoped>
@@ -107,6 +143,9 @@ if (wordCounter) {
   line-height: 1.5;
   text-align: justify;
   opacity: 0.5;
+}
+.writeWord{
+  color: green;
 }
 </style>
 
