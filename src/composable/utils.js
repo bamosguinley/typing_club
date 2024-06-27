@@ -9,15 +9,34 @@ const refusedChar = ["œ", "Æ", "ë"];
 
 const getWord = ((nombreMot) => {
   // Générer une position aléatoire dans le tableau data
-    let position = Math.floor(Math.random() * data.length);
-    // console.log(position);
-    // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
-   data2.value = data.slice(position, position + nombreMot);
-   data2.value.forEach(el => {
-     data3.value += el+' ';
-   });
-  return data3.value;
+  let position = Math.floor(Math.random() *(data.length-nombreMot+1) );
+
+  // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
+  data2.value = data.slice(position, position + nombreMot);
+
+  // Parcourir les mots extraits
+  data2.value.forEach(el => {
+    let containsRefusedChar = false;
+
+    // Vérifier si le mot contient un caractère refusé
+    for (let char of el) {
+      if (refusedChar.includes(char)) {
+        containsRefusedChar = true;
+        break;
+      }
+    }
+
+    // Ajouter le mot à data3.value seulement s'il ne contient pas de caractère refusé
+    if (!containsRefusedChar) {
+      data3.value += el + ' ';
+    } 
+  });
+ console.log(data3.value);
+  return data3.value; // Re
 });
+
+// export default getWord;
+
 
 // export default getWord;
 
@@ -34,7 +53,7 @@ const getWord = ((nombreMot) => {
 //         // Formatage en mm:ss
 //         const formattedMinutes = (minutes < 10 ? '0' : '') + minutes;
 //         const formattedSeconds = (seconds < 10 ? '0' : '') + seconds;
-        
+
 //         formattedTime = `${formattedMinutes}:${formattedSeconds}`;
 
 //         if (totalSeconds <= 0) {
@@ -48,4 +67,4 @@ const getWord = ((nombreMot) => {
 // }
 export default getWord;
 
-  
+
