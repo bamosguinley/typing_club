@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <template>
 <p v></p>
   
@@ -17,16 +18,40 @@ function getWord(position, nombreMot) {
 
 getWord(5, 8);
 
+=======
+<script setup>
+import TimerComponent from "../v2Component/TimerComponent.vue";
+import { onMounted, ref } from "vue";
+// Les variables
+const counting = ref(false);
+const countDownFinished= ref(false);
+const refreshPage = () => {
+  location.reload();
+};
+import getWord from "@/composable/utils";
+let words = getWord(50);
+
+// Fonction recuperation de la frappe au clavier et qui gère le declenchement du timer.
+function Input(e) {
+  if (!counting.value) {
+    counting.value = true;
+  }
+  console.log(e.key);
+}
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+});
+>>>>>>> 64df789fe39a236c79f3046d7461d354100f64b5
 </script>
 <template>
-  <div class="container">
-      <TimerComponent />
-      <span class="text" v-for="(word,index) in words" :key="index">
-            <span v-for="(letter,index) in word" :key="index">
-                {{ letter }}
-            </span>
+  <div class="container" v-if="!countDownFinished">
+    <TimerComponent v-if="counting" />
+    <span class="text" v-for="(word, index) in words" :key="index">
+      <span v-for="(letter, index) in word" :key="index">
+        {{ letter }}
       </span>
-    </div>
+    </span>
+  </div>
   <div class="restart">
     <a href="#" @click="refreshPage">
       <svg
@@ -41,6 +66,9 @@ getWord(5, 8);
         />
       </svg>
     </a>
+  </div>
+  <div class="v-else">
+
   </div>
 </template>
 <style scoped>
