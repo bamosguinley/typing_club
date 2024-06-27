@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-<template>
-<p v></p>
-  
-</template>
-
-<script setup>
-import data from "@/composable/data"
-
-function getWord(position, nombreMot) {
-  position = Math.floor(Math.random() * 100);
-  let data2 = [];
-  for (let i = position; i < data.length; i++) {
-    data2 += data[i];
-  }
-  console.log(data2);
-}
-
-getWord(5, 8);
-
-=======
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onMounted, ref } from "vue";
@@ -41,7 +20,6 @@ function Input(e) {
 onMounted(() => {
   document.addEventListener("keydown", Input);
 });
->>>>>>> 64df789fe39a236c79f3046d7461d354100f64b5
 </script>
 <template>
   <div class="container" v-if="!countDownFinished">
