@@ -14,73 +14,35 @@
 <script setup>
 import { ref } from "vue";
 
-// const minutes = ref("0" + 0);
-// const secondes = ref(30);
-// 
 
-//         const minutes = ref("0" + 2);
-// const secondes = ref(59);
-
-// const intervalId = setInterval(() => {
-//     secondes.value--;
-
-//     if (secondes.value < 10) {
-//         secondes.value = "0" + secondes.value;
-//     }
-//     // if (minutes.value < 10) {
-//     //     // minutes.value = "0" + minutes.value;
-//     // }
-//     if (secondes.value == 0) {
-//         minutes.value = "0" + minutes.value
-//         minutes.value--;
-//         // secondes.value = ; 
-//     }
-
-//     if (minutes.value == 0 && secondes.value == "00") {
-//         clearInterval(intervalId);
-//      }
-// }, 1000);
-
+/*
+Fonction permettant de décompter pendant 03min 00sec
+*/
 // Declaration des constantes
 const count = ref(0);
-const minutes = ref(2);
-const secondes = ref(59);
+const minutes = ref(3);
+const secondes = ref(0);
 
 // stockage de la fonction setInterval dans une variable 
 const intervalId = setInterval(() => {
     secondes.value--; // Décrémentation des secondes
+    if (secondes.value == -1) { // si la valeur des secondes est égale à -1 , 
+        secondes.value == 0; // on la ramène à 0;
+        secondes.value = 60; // ensuite à 60;
+        secondes.value--; // décrémentation des secondes
+        minutes.value --; // décrémentation des minutes
+    }
 
     if (secondes.value < 10) { // si le nombre de secondes est inférieur à 10 
         secondes.value = "0" + secondes.value; // le nombre de secondes sera précédé d'un 0
     }
   
-    if (secondes.value == 0) { // si le nombre de secondes est égal à 0 ,
-        minutes.value = "0" + minutes.value 
-        minutes.value --;
-        // secondes.value = "00";    // le nombre de  sera précédé d'un 0
-        secondes.value = 59;    // le nombre de  sera précédé d'un 0
-        // minutes.value--;
+    if (minutes.value == -1) {
+        minutes.value = 0;
+        secondes.value = "0" + 0;
     }
 
-    if (minutes.value == 0 && secondes.value == "00") {
-        clearInterval(intervalId);
-     }
 }, 1000);
-
-
-            
-            
-                // minutes.value == 0;
-                // secondes.value == 0;
-                // clearInterval(intervalId);
-            
-            // if (secondes.value == 0) {
-            //     clearInterval(intervalId)
-            // }
-            // if (minutes.value == 0) {
-            //     clearInterval(intervalId)
-            // }
-        // }, 1000)
 
 </script>
 
