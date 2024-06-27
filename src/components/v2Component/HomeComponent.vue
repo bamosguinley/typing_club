@@ -1,28 +1,34 @@
 <script setup>
-import TimerComponent from '../v2Component/TimerComponent.vue';
-  
-        const refreshPage = ()=>{
-          location.reload();
-        }
+import TimerComponent from "../v2Component/TimerComponent.vue";
+import { onMounted, ref } from "vue";
+// Les variables
+const counting = ref(false);
+const refreshPage = () => {
+  location.reload();
+};
+import getWord from "@/composable/utils";
+let words = getWord(50);
 
+// Fonction recuperation de la frappe au clavier et qui gère le declenchement du timer
+function Input(e) {
+  if (!counting.value) {
+    counting.value = true;
+  }
+  console.log(e.key);
+}
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+});
 </script>
 <template>
   <div class="container">
-      <TimerComponent />
-      <p class="text">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempora
-        temporibus alias veniam laboriosam quos provident reprehenderit ducimus
-        eveniet soluta sit nobis at maiores praesentium commodi mollitia,
-        nostrum quaerat sunt vero consectetur deleniti libero numquam
-        consequatur magnam accusamus? Voluptatem accusantium et magnam
-        blanditiis fuga neque omnis aperiam quia? Minima dolorum mollitia sunt
-        delectus exercitationem reiciendis ut impedit at magnam perspiciatis
-        labore repellendus doloribus ex, facilis deserunt placeat eligendi aut
-        iusto atque, laudantium omnis vitae illo quae. Rem non vitae architecto
-        laudantium, explicabo id ipsum ea natus dicta labore quo modi. Labore
-        maiores vero dolorem quidem, a accusamus cum dicta nisi atque?
-      </p>
-    </div>
+    <TimerComponent v-if="counting" />
+    <span class="text" v-for="(word, index) in words" :key="index">
+      <span v-for="(letter, index) in word" :key="index">
+        {{ letter }}
+      </span>
+    </span>
+  </div>
   <div class="restart">
     <a href="#" @click="refreshPage">
       <svg
