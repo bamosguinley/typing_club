@@ -1,6 +1,5 @@
 <script setup>
 import TimerComponent from '../v2Component/TimerComponent.vue';
-import {ref} from "vue"
         const refreshPage = ()=>{
           location.reload();
           const newRandmWord = getWord(50);
