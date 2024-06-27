@@ -8,7 +8,7 @@ import getWord from "@/composable/utils";
 
 let words = getWord(50); //Mots récupérés de façon aléatoire
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
-// console.log(words);
+console.log(words);
 /**
  * Ajouter chaque objet mot au tableau wordObject
  */
@@ -68,11 +68,10 @@ function Input(e) {
           console.log("Mot complet: " + currentWord);
           // Passe au mot suivant
           wordCounter.value++;
-          letterCounter.value = 0; // Réinitialise pour le nouveau mot
+          letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
         }
       } else {
         console.log("Incorrect");
-        // Gérer l'erreur si la lettre est incorrecte (optionnel)
       }
     }
   }
@@ -91,7 +90,7 @@ onMounted(() => {
   <div class="container">
     <TimerComponent v-if="counting" />
     <span class="text" v-for="(word, index) in wordObject" :key="index"  :class="{writeWord: word.isFinding === 'vrai'}">
-      {{ word.mot }}
+      {{ word.mot}}
     </span>
   </div>
   <div class="restart">
