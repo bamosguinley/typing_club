@@ -1,11 +1,22 @@
 <script setup>
 import TimerComponent from '../v2Component/TimerComponent.vue';
+import { onMounted, ref } from "vue";
   
         const refreshPage = ()=>{
           location.reload();
         }
-import getWord from '@/composable/utils'
+import getWord from '@/composable/utils';
 let words = getWord(50)
+
+
+// Fonction recuperation de la frappe au clavier 
+ function Input(e){
+  console.log(e.key);
+}
+onMounted(()=>{
+  document.addEventListener("keydown",Input)
+})
+
 </script>
 <template>
   <div class="container">
