@@ -43,7 +43,6 @@ function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
-
   console.log(e.key);
 
   // Vérifie si wordCounter est inférieur à la longueur totale des mots
@@ -65,7 +64,7 @@ function Input(e) {
 
         // Vérifie si toutes les lettres du mot ont été vérifiées
         if (letterCounter.value === currentWord.length) {
-            wordObject.value[wordCounter.value].isFinding=true
+            wordObject.value[wordCounter.value].isFinding='vrai'
           console.log("Mot complet: " + currentWord);
           // Passe au mot suivant
           wordCounter.value++;
@@ -81,7 +80,7 @@ function Input(e) {
   // Si wordCounter a atteint la fin des mots
   if (wordCounter.value === wordObject.value.length) {
     console.log("Tous les mots ont été vérifiés.");
-    // Gérer la fin de la vérification des mots (optionnel)
+  
   }
 }
 
