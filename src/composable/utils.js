@@ -1,6 +1,5 @@
 import data from "./data";
 import { ref } from "vue";
-
 let data2 = ref([]);
 let data3 = ref([]);
 let dataAleatoire = ref([]);

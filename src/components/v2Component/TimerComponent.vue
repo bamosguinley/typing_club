@@ -19,8 +19,13 @@ import { ref } from "vue";
 Fonction permettant de décompter pendant 03min 00sec
 */
 // Declaration des constantes
+
+const count = ref(0);
 const minutes = ref(3);
-const secondes = ref(0);
+const secondes = ref("0"+0);
+
+
+
 
 // stockage de la fonction setInterval dans une variable 
 const intervalId = setInterval(() => {
