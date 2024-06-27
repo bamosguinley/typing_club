@@ -1,57 +1,47 @@
 import data from './data'
-/*
-*Récuperation des mots de façon aléatoire 
-*/
-export function getWord(position, nombreMot) {
-  position = Math.floor(Math.random() * 100);
-  for (let i = position; i < data.length; i++) {
-    if (data[i] === " ") {
-      count.value++;
-      console.log(count.value);
-    }
-    if (count <= nombreMot) {
-      data2.value += data[i];
-    }
-  }
-  console.log(data2.value);
+import { ref } from "vue";
+let data2 = ref([]);
+let data3 = ref([]);
+
+let count = ref(0)
+let position=0;
+// console.log(data2.value);
+ const getWord= ((nombreMot)=> {
+  // Générer une position aléatoire dans le tableau data
+    let position = Math.floor(Math.random() * data.length);
+    console.log(position);
+    // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
+   data2.value = data.slice(position, position + nombreMot);
+   data2.value.forEach(el => {
+     data3.value += el+' ';
+   });
+  return data3.value;
+})
+
+
+// Fonction pour un décompteur de 3 minutes
+export function countdown() {
+    let totalSeconds = 3 * 60; // 3 minutes en secondes
+    let formattedTime = '';
+
+    const intervalId = setInterval(function() {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        // Formatage en mm:ss
+        const formattedMinutes = (minutes < 10 ? '0' : '') + minutes;
+        const formattedSeconds = (seconds < 10 ? '0' : '') + seconds;
+        
+        formattedTime = `${formattedMinutes}:${formattedSeconds}`;
+
+        if (totalSeconds <= 0) {
+            clearInterval(intervalId); // Arrête le décompteur une fois le temps écoulé
+        } else {
+            totalSeconds--; // Décrémente le nombre total de secondes
+        }
+    }, 1000); // Appel toutes les secondes (1000 ms)
+
+    return formattedTime;
 }
-
-getWord(5, 10);
-
-
-
-const myWords = ["chat", "chien", "oiseau", "fleur"];
-
-
-
-function getRandomWord(wordsArray) {
-  const randomIndex = Math.floor(Math.random() * wordsArray.length);
-  return wordsArray[randomIndex];
-}
- 
-
-// Appel de la fonction au chargement de la page
-window.addEventListener("load", () => {
-  const randomWord = getRandomWord(myWords);
-  console.log("Mot aléatoire au chargement de la page :", randomWord);
-});
-
-
-function storeRandomWord(word) {
-  localStorage.setItem("randomWord", word);
-}
-
-// Appel de la fonction lors de la génération du mot aléatoire
-const newRandomWord = getRandomWord(myWords);
-storeRandomWord(newRandomWord);
-
-
-window.addEventListener("load", () => {
-  const storedRandomWord = localStorage.getItem("randomWord");
-  console.log("Mot aléatoire précédent :", storedRandomWord);
-});
-
-
-export function setString(String) {
-
-}
+export default getWord;
+  
