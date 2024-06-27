@@ -1,22 +1,50 @@
-import data from "./data";
+import data from './data';
 import { ref } from "vue";
 let data2 = ref([]);
 let data3 = ref([]);
+let dataAleatoire = ref([]);
 
 let count = ref(0);
-let position = 0;
-// console.log(data2.value);
-const getWord = (nombreMot) => {
-  // Générer une position aléatoire dans le tableau data
-  let position = Math.floor(Math.random() * data.length);
-  console.log(position);
+const refusedChar = ["œ", "Æ"];
+
+// Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
+data.forEach(element => {
+  data2.value = data2.value.concat(element.split(/\s/)); 
+});
+
+const getWord = ((nombreMot) => {
+ 
+  // Génére une position aléatoire dans le tableau data2.value
+  let position = Math.floor(Math.random() * (data2.value.length - nombreMot + 1));
+  
   // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
-  data2.value = data.slice(position, position + nombreMot);
-  //  data2.value.forEach(el => {
-  //    data3.value += el+' ';
-  //  });
-  return data2.value;
-};
+  dataAleatoire.value = data2.value.slice(position, position + nombreMot);
+  console.log("Mots extraits avant filtrage :", dataAleatoire.value);
+  // Parcours les mots extraits
+  data3.value = ""; // Réinitialiser data3.value
+  dataAleatoire.value.forEach(el => {
+    let containsRefusedChar = false;
+    // Vérifie si le mot contient un caractère refusé
+    for (let char of el) {
+      if (refusedChar.includes(char)) {
+        containsRefusedChar = true;
+        break;
+      }
+    }
+    // Ajoute le mot à data3.value seulement s'il ne contient pas de caractère refusé
+    if (!containsRefusedChar) {
+      data3.value += el + ' ';
+    }
+  });
+
+  console.log("Mots filtrés :", data3.value);
+  return data3.value.trim(); // Retourner data3.value sans espaces de fin
+});
+
+// export default getWord;
+
+
+// export default getWord;
 
 // Fonction pour un décompteur de 3 minutes
 export const chrono = function countdown() {
