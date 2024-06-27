@@ -3,14 +3,13 @@ import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onMounted, ref } from "vue";
 // Les variables
 const counting = ref(false);
-const countDownFinished= ref(false);
 const refreshPage = () => {
   location.reload();
 };
 import getWord from "@/composable/utils";
 let words = getWord(50);
 
-// Fonction recuperation de la frappe au clavier et qui gère le declenchement du timer.
+// Fonction recuperation de la frappe au clavier et qui gère le declenchement du timer
 function Input(e) {
   if (!counting.value) {
     counting.value = true;
@@ -22,7 +21,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="container" v-if="!countDownFinished">
+  <div class="container">
     <TimerComponent v-if="counting" />
     <span class="text" v-for="(word, index) in words" :key="index">
       <span v-for="(letter, index) in word" :key="index">
@@ -44,9 +43,6 @@ onMounted(() => {
         />
       </svg>
     </a>
-  </div>
-  <div class="v-else">
-
   </div>
 </template>
 <style scoped>
