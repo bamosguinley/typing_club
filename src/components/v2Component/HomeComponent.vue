@@ -61,7 +61,6 @@ if (wordCounter) {
       <span class="text" v-for="(word,index) in wordObject" :key="index">
            {{word.mot}}
       </span>
-    </span>
   </div>
   <div class="restart">
     <a href="#" @click="storeRandomWord(wordObject)">
