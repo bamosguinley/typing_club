@@ -6,17 +6,25 @@ const refreshPage = () => {
 };
 import getWord from "@/composable/utils";
 
-let words = getWord(50); //Mots récupérés de façon aléatoire
+let words = getWord(25); //Mots récupérés de façon aléatoire
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
+let succedWord = ref(0);
+const minutes = 2;
+const secondes = 56;
 
 /**
  * Ajouter chaque objet mot au tableau wordObject
  */
 words.forEach((el) => {
-  wordObject.value.push({ mot: el+' ', isFinding: "", isCurrent: false });
+  wordObject.value.push({
+    mot: el + " ",
+    isFinding: "",
+    isCurrent: false,
+    attemps: 0,
+  });
 });
 
 /**
@@ -29,7 +37,6 @@ function storeRandomWord(word) {
   let storedRandomWord = currentStorage.getItem("randomWord");
   return storedRandomWord;
 }
-
 
 /**
  * Récupérer la frappe au clavier et qui gère le declenchement du timer
@@ -61,21 +68,58 @@ function Input(e) {
         // Vérifie si toutes les lettres du mot ont été vérifiées
         if (letterCounter.value === currentWord.length) {
           wordObject.value[wordCounter.value].isFinding = "vrai";
-          console.log("Mot complet: " + currentWord);
+          // console.log("Mot complet: " + currentWord);
           // Passe au mot suivant
           wordCounter.value++;
           letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
         }
       } else {
         wordObject.value[wordCounter.value].isFinding = "faux";
+        let x = wordObject.value[wordCounter.value].attemps++; // Incrementation du nombre de tentative pour chaque mot
+        console.log("nombres de mauvaise tentatives " + x);
       }
     }
   }
-  // Si wordCounter a atteint la fin des mots
-  if (wordCounter.value === wordObject.value.length) {
-    console.log("Tous les mots ont été vérifiés.");
-  }
-}
+
+   // Si wordCounter a atteint la fin des mots
+   if (wordCounter.value === wordObject.value.length) {
+     // console.log("Tous les mots ont été vérifiés.");
+   }
+ }
+
+     /**
+      * fonction de calcul de précision
+       */
+  const getPrecision = () => {
+    let totalAttempts = wordObject.value.reduce( 
+      (acc, el) => acc + el.attemps,// fait la somme de tous les tentatives de chaque objet (mot)
+      0
+    );
+    let precision = ((words.length - totalAttempts) / words.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots 
+    if (precision <= 0) { // la précision ne doit pas être en dessous de 0
+      precision = 0;
+    }
+    console.log(precision);
+    succedWord.value = words.length - totalAttempts; //nombre de mots réussis
+    return precision; // retour de la précision
+  };
+ getPrecision();
+
+/**
+ * fonction de calcul de la vitesse 
+ */
+
+const getSpeed = () => {
+  let totalAttempts = wordObject.value.reduce((acc, el) => acc + el.attemps, 0); //somme de tous les tentatives manquées de chaque objet (mot)
+  succedWord.value = words.length - totalAttempts; // nombre de mots réussis 
+  let time = minutes + secondes / 60; // calcul du temps et conversion en minutes 
+  let speed = succedWord.value / time; // calcul de la vitesse
+  console.log("nombres de mots réussis" + succedWord.value);
+  return speed; // retour de la valeur de la vitesse 
+};
+console.log(getSpeed());
+
+// console.log(attempts);
 //Ecouter la frappe dès le chargement de la page
 onMounted(() => {
   document.addEventListener("keydown", Input);
@@ -94,7 +138,7 @@ onMounted(() => {
         currentW: word.isCurrent === true,
       }"
     >
-      {{ word.mot}}
+      {{ word.mot }}
     </span>
   </div>
   <div class="restart">
@@ -146,7 +190,7 @@ onMounted(() => {
 .currentW {
   background-color: #4947473a;
 }
-.wrongWord{
+.wrongWord {
   background-color: #e20606;
 }
 </style>
