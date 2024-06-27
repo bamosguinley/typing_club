@@ -37,8 +37,17 @@ const getWord = ((nombreMot) => {
       data3.value.push(el);
     }
   });
-  return data3.value.join(' '); // Retourner data3.value en tant que tableau
+  return data3.value; // Retourner data3.value en tant que tableau
 });
+
+// FONCTIONS DE CALCULS DE LA PRECISION
+ export function getTime(minutes,secondes){
+  time =minutes + secondes/60;
+  return time;
+}
+
+
+
 
 // export default getWord;
 
