@@ -1,9 +1,9 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import ResultComponent from "../v2Component/ResultComponent.vue";
 import { onMounted, ref } from "vue";
 
 // Les variables
+const minutes = ref('');
 const counting = ref(false);
 const refreshPage = () => {
   location.reload();
@@ -21,11 +21,15 @@ function Input(e) {
 onMounted(() => {
   document.addEventListener("keydown", Input);
 });
+
+function sendResults (minute) {
+    minutes.value = minute;
+    console.log(minutes.value);
+}
 </script>
 <template>
   <div class="container">
-    <ResultComponent />
-    <TimerComponent v-if="counting" />
+    <TimerComponent v-if="counting" @sendResult = "sendResults" />
     <span class="text" v-for="(word, index) in words" :key="index">
       <span v-for="(letter, index) in word" :key="index">
         {{ letter }}

@@ -14,23 +14,26 @@
 
 <script setup>
 import { ref } from "vue";
-// const emit = defineEmits(["sendResult"])
+const emit = defineEmits(["sendResult"])
 /*
 Fonction permettant de décompter pendant 03min 00sec
 */
 // Déclaration des constantes
 
-const minutes = ref(3);
+const minutes = ref(1);
 const secondes = ref("0" + 0);
 
 // stockage de la fonction setInterval dans une variable 
 
     const intervalId = setInterval(() => {
+        if () {
+            
+        }
     secondes.value--; // Décrémentation des secondes
     if (secondes.value == -1) { // si la valeur des secondes est égale à -1 , 
         secondes.value == 0; // on la ramène à 0;
-        secondes.value = 60; // ensuite à 60;
-        secondes.value--; // décrémentation des secondes
+        secondes.value = 59; // ensuite à 60;
+        // secondes.value--; // décrémentation des secondes
         minutes.value --; // décrémentation des minutes
     }
 
@@ -39,12 +42,14 @@ const secondes = ref("0" + 0);
     }
   
     if (minutes.value == -1) {
-        minutes.value = 0;
-        secondes.value = "0" + 0;
+        // minutes.value = 0;
+        // secondes.value = "0" + 0;
+        emit("sendResult", minutes.value )
+        // window.location.href = "http://localhost:5173/version2/start/result"; 
     }
 
     // if(secondes.value == 0 && minutes.value == 0) {
-    //     emit("sendResult", Sender.value)
+    //   
     // }
 
 }, 1000);

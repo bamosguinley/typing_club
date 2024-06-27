@@ -24,6 +24,10 @@ const router = createRouter({
         {
           path: "/version2/start",
           component: () => import("../components/v2Component/HomeComponent.vue"),
+          children : [{
+            path: "/result",
+            component: () => import("../components/v2Component/ResultComponent.vue")
+          }]
         }
       ]
     },
