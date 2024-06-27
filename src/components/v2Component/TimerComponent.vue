@@ -47,7 +47,6 @@ const intervalId = setInterval(() => {
     }
 
 }, 1000);
-
 </script>
 
 <style scoped>
