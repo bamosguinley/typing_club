@@ -45,7 +45,7 @@ export const chrono = function countdown() {
 
 export default getWord;
 
-/*-
+/*
  *Stocker les données
  */
 export function storeRandomWord(word) {

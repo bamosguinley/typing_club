@@ -1,17 +1,44 @@
 <script setup>
 import TimerComponent from '../v2Component/TimerComponent.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
         const refreshPage = ()=>{
           location.reload();
         }
 import getWord from '@/composable/utils'
-let words = getWord(50)
-let wordObject = ref([])
-console.log(words);
+
+let words = getWord(50) //Mots récupérés de façon aléatoire
+let wordObject = ref([]) //Initialiser un tableau d'objet mot
+// console.log(words);
+/**
+ * Ajouter chaque objet mot au tableau wordObject
+ */
 words.forEach(el => {
   wordObject.value.push({ mot: el+' ', isFinding:''})
 });
+
+/**
+ * Stocker localement les mots actuel
+ * @param word 
+ */
+function storeRandomWord(word) {
+  localStorage.setItem("randomWord", word);
+  const storedRandomWord = localStorage.getItem("randomWord");
+  return storedRandomWord;
+}
+const storedWord = storeRandomWord(wordObject);
+console.log(storedWord);
+
+console.log(storeRandomWord(wordObject));
 console.log(wordObject.value);
+
+
+const wordCounter = ref(1);
+const letterCounter = ref(1);
+
+if (wordCounter) {
+  
+}
+
 </script>
 <template>
   <div class="container">
@@ -21,7 +48,7 @@ console.log(wordObject.value);
       </span>
     </div>
   <div class="restart">
-    <a href="#" @click="refreshPage">
+    <a href="#" @click="storeRandomWord(wordObject)">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="60px"
