@@ -1,12 +1,13 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onMounted, ref } from "vue";
-// Les variables
+import getWord from "@/composable/utils";
+// Les variables déclaré 
 const counting = ref(false);
 const refreshPage = () => {
   location.reload();
 };
-import getWord from "@/composable/utils";
+
 let words = getWord(50);
 
 // Fonction recuperation de la frappe au clavier et qui gère le declenchement du timer
