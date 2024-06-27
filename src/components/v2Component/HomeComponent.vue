@@ -76,14 +76,12 @@ function Input(e) {
       }
     }
   }
-
   // Si wordCounter a atteint la fin des mots
   if (wordCounter.value === wordObject.value.length) {
     console.log("Tous les mots ont été vérifiés.");
   
   }
 }
-
 //Ecouter la frappe dès le chargement de la page
 onMounted(() => {
   document.addEventListener("keydown", Input);
@@ -92,12 +90,8 @@ onMounted(() => {
 <template>
   <div class="container">
     <TimerComponent v-if="counting" />
-    <span class="text" v-for="(word, index) in wordObject" :key="index"  :class="{
-           writeWord: word.isFinding === 'vrai',
-          }">
-      <span v-for="(letter, index) in word" :key="index">
-        {{ letter }}
-      </span>
+    <span class="text" v-for="(word, index) in wordObject" :key="index"  :class="{writeWord: word.isFinding === 'vrai'}">
+      {{ word.mot }}
     </span>
   </div>
   <div class="restart">
