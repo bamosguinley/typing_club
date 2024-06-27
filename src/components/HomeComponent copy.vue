@@ -11,7 +11,6 @@ const seconds = ref(0);
 const countWords = ref(1);
 const keysToSkip = ["Shift", "CapsLock", "Dead", "Control", "Alt"];
 let count = 0;
-let wordCount = 0;
 let startCounter = ref(0);
 const isResultVisible = ref(false);
 const resultData = ref({
@@ -26,7 +25,7 @@ const textContainersRef = ref(null);
  * Fonction permettant d'obtenir les mots à travvers un API
  */
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/20")
+  fetch("https://trouve-mot.fr/api/random/30")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
@@ -53,10 +52,10 @@ async function getWorlds() {
 
         if (index !== data.length - 1) {
           // if (wordsArray.value[index - 1].type === "space") {
-          wordsArray.value.push({ value: word.name, letters, isRight: "", tentative: 0, type: "word" }, { value: " ", letters: [{ char: " ", isRight: "", tentative: 0 }], isRight: "", type: "space" });
+          wordsArray.value.push({ value: word.name, letters, isRight: "", type: "word" }, { value: " ", isRight: "", type: "space" });
           // }
         } else {
-          wordsArray.value.push({ value: word.name, letters, isRight: "", tentative: 0, type: "word" });
+          wordsArray.value.push({ value: word.name, letters, isRight: "", type: "word" });
         }
       });
 
@@ -83,57 +82,37 @@ function getUserInput(e) {
   if (startCounter.value < 1) {
     startCounter.value++;
   }
-  if (countWords === wordsArray.value.length - 1 && count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1) {
-
-    alert("V I C T O I R E 🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️ !!!!!!!!!!")
-    // supprimer les écouteurs d'évênements
-    // document.removeEventListener("keydown", getUserInput)
-    // document.removeEventListener("keydown", stopSpaceKeyScrolling)
-    // Afficher le composant ResultComponent après la dernière frappe
-    // displayResult();
-
-  } else {
+  if (count < lettersArray.value.length - 1) {
     // condition de suppression
-    // if (e.key === "Backspace") {
-    //   // à la première lettre, on retire le style lié à isRight sans décrémenter count
-    //   if (count === 0) {
-    //     wordsArray.value[0].letters[0].isRight = "";
-    //     console.log("count", count);
-    //     console.log("element suppr", lettersArray.value[count].isRight);
-    //     // après le premier caractère on décrémente count puis on retire le style lié à isRight
-    //   } else {
-    //     lettersArray.value[--count].isRight = "";
-    //     console.log("count", count);
-    //     console.log("element suppr", lettersArray.value[count].isRight);
-    //   }
-    // } else 
-
-    if (!keysToSkip.includes(e.key)) {
-      if (wordsArray.value[wordCount].letters.length !== count) {
-        if (wordsArray.value[wordCount].letters[count].char === e.key) {
-          wordsArray.value[wordCount].letters[count].tentative > 0
-            ? wordsArray.value[wordCount].letters[count].isRight = "succesAfterManyAttempts"
-            : wordsArray.value[wordCount].letters[count].isRight = "successAfterOneAttempt"
-          count++
-        } else {
-          wordsArray.value[wordCount].letters[count].isRight = "failed"
-          wordsArray.value[wordCount].letters[count].tentative++
-        }
+    if (e.key === "Backspace") {
+      // à la première lettre, on retire le style lié à isRight sans décrémenter count
+      if (count === 0) {
+        lettersArray.value[count].isRight = "";
+        console.log("count", count);
+        console.log("element suppr", lettersArray.value[count].isRight);
+        // après le premier caractère on décrémente count puis on retire le style lié à isRight
       } else {
-        wordCount++
-        count = 0;
-        if (wordsArray.value[wordCount].letters[count].char === e.key) {
-          wordsArray.value[wordCount].letters[count].isRight = "successAfterOneAttempt"
-          count++
-        } else {
-          wordsArray.value[wordCount].letters[count].isRight = "failed"
-          wordsArray.value[wordCount].letters[count].tentative++
-        }
+        lettersArray.value[--count].isRight = "";
+        console.log("count", count);
+        console.log("element suppr", lettersArray.value[count].isRight);
       }
+    } else if (!keysToSkip.includes(e.key)) {
+      if (lettersArray.value[count].char === e.key) {
+        lettersArray.value[count].tentative > 0
+          ? (lettersArray.value[count].isRight = "succesAfterManyAttempts")
+          : (lettersArray.value[count].isRight = "successAfterOneAttempt");
+      } else {
+        lettersArray.value[count].isRight = "failed";
+        lettersArray.value[count].tentative++;
+      }
+      count++;
     }
-
-
-
+  } else {
+    // supprimer les écouteurs d'évênements
+    document.removeEventListener("keydown", getUserInput)
+    document.removeEventListener("keydown", stopSpaceKeyScrolling)
+    // Afficher le composant ResultComponent après la dernière frappe
+    displayResult();
   }
 }
 
@@ -207,19 +186,18 @@ onMounted(() => {
       <span v-show="!startCounter">Commencez à taper</span>
     </p>
     <div class="container">
-      <div class="text-container" ref="textContainersRef">
-        <p v-for="(word, index) in wordsArray" :key="index">
-          <span v-for="(letter, i) in word.letters" :key="i" :class="{
-            spaceClass: letter.char === ' ',
-            letterClass: true,
-            letterRight: letter.isRight === 'successAfterOneAttempt',
-            letterWrong: letter.isRight === 'failed',
-            letterRepeat: letter.isRight === 'succesAfterManyAttempts',
-          }">
-            {{ letter.char }}
-          </span>
-        </p>
-      </div>
+      <p class="text-container" ref="textContainersRef">
+        <!-- <p v-for="(mot, i) in mots" ></p> -->
+        <span v-for="(letter, index) in lettersArray" :key="index" :class="{
+          spaceClass: letter.char === ' ',
+          letterClass: true,
+          letterRight: letter.isRight === 'successAfterOneAttempt',
+          letterWrong: letter.isRight === 'failed',
+          letterRepeat: letter.isRight === 'succesAfterManyAttempts',
+        }">
+          {{ letter.char }}
+        </span>
+      </p>
     </div>
     <p class="start-text-container">
       <IconeTime /><br />
@@ -259,7 +237,7 @@ onMounted(() => {
 .spaceClass {
   content: " ";
   padding: 0;
-  padding-inline: 10px !important;
+  padding-inline: 8px !important;
 
   width: 10px;
 }
@@ -296,9 +274,5 @@ onMounted(() => {
   flex-wrap: wrap;
   padding: 20px;
   border: 1px solid red;
-}
-
-.text-container p {
-  margin: 0;
 }
 </style>

@@ -1,6 +1,8 @@
+@import url("./base.css");
+
 body {
-  margin: 0;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+  font-family:'Times New Roman', Times, serif;
   background-color:#f6dec8;
 }
 @font-face {
