@@ -16,6 +16,16 @@ const router = createRouter({
       path: "/version2",
       name: "version2",
       component: () => import("../views/TypingV2View.vue"),
+      children: [
+        {
+          path: "",
+          component: () => import("../components/v2Component/LandingComponent.vue"),
+        },
+        {
+          path: "/version2/start",
+          component: () => import("../components/v2Component/HomeComponent.vue"),
+        }
+      ]
     },
   ],
 });
