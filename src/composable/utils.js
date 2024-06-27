@@ -12,15 +12,15 @@ let position=0;
     console.log(position);
     // Extraire les mots à partir de la position aléatoire jusqu'à nombreMot
    data2.value = data.slice(position, position + nombreMot);
-   data2.value.forEach(el => {
-     data3.value += el+' ';
-   });
-  return data3.value;
+  //  data2.value.forEach(el => {
+  //    data3.value += el+' ';
+  //  });
+  return data2.value;
 })
 
 
 // Fonction pour un décompteur de 3 minutes
-export function countdown() {
+export  const chrono= function countdown() {
     let totalSeconds = 3 * 60; // 3 minutes en secondes
     let formattedTime = '';
 
@@ -43,5 +43,6 @@ export function countdown() {
 
     return formattedTime;
 }
+
 export default getWord;
   

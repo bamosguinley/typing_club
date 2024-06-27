@@ -1,19 +1,23 @@
 <script setup>
 import TimerComponent from '../v2Component/TimerComponent.vue';
-  
+import { ref } from 'vue';
         const refreshPage = ()=>{
           location.reload();
         }
 import getWord from '@/composable/utils'
 let words = getWord(50)
+let wordObject = ref([])
+console.log(words);
+words.forEach(el => {
+  wordObject.value.push({ mot: el+' ', isFinding:''})
+});
+console.log(wordObject.value);
 </script>
 <template>
   <div class="container">
       <TimerComponent />
-      <span class="text" v-for="(word,index) in words" :key="index">
-            <span v-for="(letter,index) in word" :key="index">
-                {{ letter }}
-            </span>
+      <span class="text" v-for="(word,index) in wordObject" :key="index">
+           {{word.mot}}
       </span>
     </div>
   <div class="restart">
