@@ -8,17 +8,13 @@
             </svg>
             {{ minutes + ":" }}{{ secondes + "" }}
         </div>
-        <div class="result">
 
-        </div>
 
 </template>
 
 <script setup>
 import { ref } from "vue";
-
-const emit = defineEmits(["sendResult"]);
-const 
+// const emit = defineEmits(["sendResult"])
 /*
 Fonction permettant de décompter pendant 03min 00sec
 */
@@ -45,9 +41,9 @@ const intervalId = setInterval(() => {
         minutes.value = 0;
         secondes.value = "0" + 0;
     }
-    if(secondes.value == 0 && minutes.value == 0) {
-        emit("sendResult", Sender.value)
-    }
+    // if(secondes.value == 0 && minutes.value == 0) {
+    //     emit("sendResult", Sender.value)
+    // }
 
 }, 1000);
 
