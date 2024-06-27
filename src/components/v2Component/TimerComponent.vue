@@ -34,6 +34,10 @@ const intervalId = setInterval(() => {
 
     if (secondes.value < 10 ) { // si le nombre de secondes est inférieur à 10 
         secondes.value = "0" + secondes.value; // le nombre de secondes sera précédé d'un 0
+        // minutes.value="0"+minutes.value;
+    }
+    if(minutes.value<10){
+        minutes.value=minutes.value
     }
   
     if (minutes.value == -1) {
@@ -42,7 +46,6 @@ const intervalId = setInterval(() => {
     }
 
 }, 1000);
-
 </script>
 
 

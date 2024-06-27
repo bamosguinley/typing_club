@@ -35,6 +35,21 @@ console.log(wordObject.value);
 const wordCounter = ref(1);
 const letterCounter = ref(1);
 
+
+/**
+ * Récupérer la frappe au clavier et qui gère le declenchement du timer
+ * @param e 
+ */
+function Input(e) {
+  if (!counting.value) {
+    counting.value = true;
+  }
+  console.log(e.key);
+}
+//Ecouter la frappe dès le chargement de la page
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+});
 if (wordCounter) {
   
 }
@@ -46,7 +61,8 @@ if (wordCounter) {
       <span class="text" v-for="(word,index) in wordObject" :key="index">
            {{word.mot}}
       </span>
-    </div>
+    </span>
+  </div>
   <div class="restart">
     <a href="#" @click="storeRandomWord(wordObject)">
       <svg
@@ -61,6 +77,9 @@ if (wordCounter) {
         />
       </svg>
     </a>
+  </div>
+  <div class="v-else">
+
   </div>
 </template>
 <style scoped>
