@@ -13,7 +13,6 @@ const wordCounter = ref(0);
 const letterCounter = ref(0);
 let userInput = ref("");
 let wrongCount= ref(0)
-let conditionGreen;
 
 /**
  * Ajouter chaque objet mot au tableau wordObject
@@ -122,7 +121,7 @@ onMounted(() => {
         v-for="(letter, index1) in word.mot.split('')"
         :key="index1"
         :class="{
-          green: index === wordCounter && index1 === letterCounter - 1,
+          green: index === wordCounter && index1 === letterCounter,
         }"
       >
         {{ letter }}
@@ -147,8 +146,8 @@ onMounted(() => {
 </template>
 <style scoped>
 .green {
-  color: green;
-  background-color: #0080006c;
+  color: rgb(18, 19, 18);
+  background-color: #0f0f0f6c;
   border-bottom: 1px solid;
 }
 
