@@ -1,7 +1,14 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onBeforeMount, onMounted, reactive, ref } from "vue";
-import {getObject, getPrecision, getSpeed, getWord, setObject} from "@/composable/utils";
+import SpinnerComponent from "../v2Component/SpinnerComponent.vue";
+import { onBeforeMount, onMounted, reactive, ref,watch } from "vue";
+import {
+  getObject,
+  getPrecision,
+  getSpeed,
+  getWord,
+  setObject,
+} from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
 const preventKey = ["Shift", "CapsLock", "Dead"];
@@ -9,47 +16,42 @@ const refreshPage = () => {
   location.reload();
 };
 let word = ref([]);
+let start= ref(false)
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
 onBeforeMount(() => {
   word.value = getWord(50);
-  if (localStorage.getItem(1)==undefined ) {
-    setObject(1,word.value)
+  if (localStorage.getItem(1) == undefined) {
+    setObject(1, word.value);
   }
-})
+});
 
 //Ecouter la frappe dès le chargement de la page
 onMounted(() => {
   document.addEventListener("keydown", Input);
   word.value = getObject(1);
-  word.value .forEach((el) => {
-  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false ,wrongPerWord: 0});
+  word.value.forEach((el) => {
+    wordObject.value.push({
+      mot: el + " ",
+      isFinding: "",
+      isCurrent: false,
+      wrongPerWord: 0,
+    });
+  });
+  setTimeout(() => {
+    return start.value = true;
+  },99000)
+  
 });
 
-//   setTimeout(() => {
-//     getPrecision(wordObject.value)
-//     console.log('presiiddd b'+getPrecision(wordObject.value)
-// );
-//   },3000)
-});
-
-const typingCount= ref(0)
+const typingCount = ref(0);
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
-let userInput = ref("");
-let wrongCount= ref(0)
+let wrongCount = ref(0);
 const timeIsUp = ref(false); // Variable pour vérifier si le temps est écoulé
 let vitesse = 0;
 let totalWrong = 0;
 let precision = 0;
-
-if (timeIsUp.value == true) {
-  vitesse = getSpeed(typingCount, 3)
-  totalWrong = wordObject.value.wrongPerWord.reduce((acc, el) => el + acc, 0);
-  precision = getPrecision(totalWrong, wordObject.value);
-
-}
-
 
 /**
  * Stocker localement les mots actuel
@@ -69,7 +71,7 @@ function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
-   if (preventKey.includes(e.key)) {
+  if (preventKey.includes(e.key)) {
     return; // Ignorer cette touche et sortir de la fonction
   }
   typingCount.value++;
@@ -78,7 +80,7 @@ function Input(e) {
     // Récupère le mot actuel à tester
     let currentWord = wordObject.value[wordCounter.value].mot;
     //Passer la propriété du mot courant a true pour appliquer une class
-        wordObject.value[wordCounter.value].isCurrent = true;
+    wordObject.value[wordCounter.value].isCurrent = true;
     // Vérifie si letterCounter est inférieur à la longueur du mot actuel
     if (letterCounter.value < currentWord.length) {
       // Récupère la lettre attendue dans le mot actuel
@@ -91,40 +93,41 @@ function Input(e) {
         // Vérifie si toutes les lettres du mot ont été vérifiées
         if (letterCounter.value === currentWord.length) {
           //Vérifier si le nombre d'erreur par mot est 0
-          console.log(": "+wrongCount.value);
-          if (wrongCount.value===0) {
-             wordObject.value[wordCounter.value].isFinding = "vrai";
+          console.log(": " + wrongCount.value);
+          if (wrongCount.value === 0) {
+            wordObject.value[wordCounter.value].isFinding = "vrai";
           }
           // Passe au mot suivant
           wordCounter.value++;
           wordObject.value[wordCounter.value].isCurrent = true;
           letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
-          wrongCount.value = 0; 
+          wrongCount.value = 0;
         }
-      }
+      } else if (e.key === "Backspace" && letterCounter.value > 0) {
       /**
        * Retourner en arrière en cas d'erreur
        */
-      else if (e.key === "Backspace" && letterCounter.value > 0 ) {
         wordObject.value[wordCounter.value].isFinding = "";
         letterCounter.value--;
         wrongCount.value--;
-          console.log(wrongCount.value);
+        console.log(wrongCount.value);
         console.log(letterCounter.value);
       } else {
         letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         wrongCount.value++;
         wordObject.value[wordCounter.value].wrongPerWord++;
-        console.log("erreur de frappe"+ wordObject.value[wordCounter.value].wrongPerWord);
+        console.log(
+          "erreur de frappe" + wordObject.value[wordCounter.value].wrongPerWord
+        );
         if (letterCounter.value === currentWord.length) {
           //Vérifier si le nombre d'erreur par mot est 0
-          console.log(": "+wrongCount.value);
+          console.log(": " + wrongCount.value);
           wordCounter.value++;
           wordObject.value[wordCounter.value].isCurrent = true;
           letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
-          wrongCount.value = 0; 
-        }   
+          wrongCount.value = 0;
+        }
       }
     }
   }
@@ -135,11 +138,30 @@ function Input(e) {
   // }
 }
 
+// Watcher pour la propriété vitesse
+watch(
+  () => timeIsUp.value,
+  () => {
+    vitesse = getSpeed(wordCounter.value, 3);
+     const attemps= wordObject.value.map((el) => el.wrongPerWord)
+    const totalCaract = wordObject.value.map((el) => el.mot.length).reduce((acc, el) => el + acc, 0)
+     console.log(totalCaract);
+    totalWrong = attemps.reduce((acc, el) => el + acc, 0);
+    precision = getPrecision(totalCaract,totalWrong);
+    localStorage.clear();
+  }
+
+);
+
 </script>
 <template>
-  
-  <div class="container" v-if="timeIsUp===true">
-    <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
+<div class="global">
+  <div class="loader" v-if="start===false">
+  <spinner-component />
+</div>
+<div class="contenu" v-else>
+    <div class="container" v-if="timeIsUp === false">
+    <TimerComponent v-if="counting" @sendTimeOver="(el) => (timeIsUp = el)" />
     <span
       class="text"
       v-for="(word, index) in wordObject"
@@ -150,20 +172,25 @@ function Input(e) {
         currentW: word.isCurrent === true,
       }"
     >
-      <span class="letterSpan"
+      <span
+        class="letterSpan"
         v-for="(letter, index1) in word.mot.split('')"
         :key="index1"
         :class="{
-          green: index === wordCounter && index1 === letterCounter - 1,
+          green: index === wordCounter && index1 === letterCounter ,
         }"
       >
         {{ letter }}
       </span>
     </span>
   </div>
-  <ResultComponent v-if="timeIsUp===false" :vitesse="vitesse" :precision="precision"/>
+  <ResultComponent
+    v-if="timeIsUp === true"
+    :vitesseProps="vitesse"
+    :precisionProps="precision"
+  />
   <div class="restart">
-    <a href="#" @click="storeRandomWord(wordObject)">
+    <a href="">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="60px"
@@ -177,8 +204,22 @@ function Input(e) {
       </svg>
     </a>
   </div>
+</div>
+</div>
 </template>
 <style scoped>
+/* .global{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+}
+.loader{
+  text-align: center;
+  margin: 0 auto;
+} */
 .green {
   color: rgb(90, 92, 90);
   background-color: #5b5e5b6c;
@@ -192,7 +233,7 @@ function Input(e) {
   height: 300px;
   margin: 2rem auto;
   background-color: transparent;
-  padding: 2rem;
+  padding: 3rem;
   margin-bottom: 2rem;
   /* overflow:hidden; */
 }
@@ -223,7 +264,7 @@ function Input(e) {
 .wrongWord {
   color: #e20606;
 }
-.letterSpan{
+.letterSpan {
   padding: 0 4px;
 }
 </style>

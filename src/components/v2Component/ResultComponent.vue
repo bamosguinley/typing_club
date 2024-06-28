@@ -4,15 +4,29 @@
 // const props = defineProps({
 //   data: Object,
 // });
-import { ref } from "vue";
+import { ref, watch } from "vue";
 let verif = ref("");
 
 const timeIsUp = ref(1);
 const emits = defineEmits("response", timeIsUp);
 const props = defineProps({
-  vitesse: Number,
-  precision: Number,
+  vitesseProps: Number,
+  precisionProps: Number,
 });
+const vitesseValue = ref( props.vitesseProps); // Variable pour stocker la vitesse
+const precisionValue = ref(props.precisionProps);
+
+ // Watcher pour la propriété vitesse
+    watch(() => props.vitesseProps, (newValue) => 
+      vitesseValue.value = newValue // Mettre à jour la variable vitesse
+    );
+
+     // Watcher pour la propriété precision
+    watch(() => props.precisionProps, (newValue) => 
+      precisionValue.value = newValue// Mettre à jour la variable precisionValue
+
+    );
+
 </script>
 
 <template>
@@ -21,16 +35,16 @@ const props = defineProps({
       <h1>RESULTATS</h1>
     </div>
     <div class="nbr-mot">
-      <h2>{{ props.vitesse }}</h2>
+      <h2>{{vitesseValue}}</h2>
       (par minutes)
     </div>
     <div class="flex">
       <div><span>Precision</span> :</div>
-      <div>{{ props.precision + " %" }}</div>
+      <div>{{ precisionProps}} %</div>
     </div>
     <div class="flex">
       <div><span>Durée</span> :</div>
-      <div>03 : 00</div>
+      <div>03:00</div>
     </div>
   </div>
 </template>

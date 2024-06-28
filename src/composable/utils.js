@@ -95,23 +95,20 @@ export const getTotalAttempts = (wordObject) => {
   );
   return totalAttempts;
 };
-export const getPrecision = (totalAttempts, words) => {
-  let precision = ((words.length - totalAttempts) / words.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
+export const getPrecision = (totalAttempts, wordsLenght) => {
+  let precision = ((totalAttempts-wordsLenght)/totalAttempts) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
   if (precision <= 0) {
     // la précision ne doit pas être en dessous de 0
     precision = 0;
   }
-  console.log(precision);
-  succedWord.value = words.length - totalAttempts; //nombre de mots réussis
-  return precision; // retour de la précision
+  return Math.floor(precision); // retour de la précision
 };
 
 /**
  * fonction de calcul de la vitesse
  */
 export const getSpeed = (totalTipyng,time) => {
-  let speed =Math.floor((totalTipyng/5) / time); // calcul de la vitesse
-  console.log("nombres de mots réussis" +speed);
+  const speed =Math.floor(totalTipyng/time); // calcul de la vitesse
   return speed; // retour de la valeur de la vitesse
 };
 
