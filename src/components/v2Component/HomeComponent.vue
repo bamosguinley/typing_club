@@ -1,14 +1,14 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onMounted, reactive, ref } from "vue";
-import getWord from "@/composable/utils";
+import { onBeforeMount, onMounted, reactive, ref } from "vue";
+import {getWord} from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
-
+const preventKey = ["Shift", "CapsLock", "Dead"];
 const refreshPage = () => {
   location.reload();
 };
-import { getWord,getPrecision } from "@/composable/utils";
+
 
 let words = getWord(50); //Mots récupérés de façon aléatoire
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
@@ -111,11 +111,11 @@ function Input(e) {
 //Ecouter la frappe dès le chargement de la page
 onMounted(() => {
   document.addEventListener("keydown", Input);
-  setTimeout(() => {
-    getPrecision(wordObject.value)
-    console.log('presiiddd b'+getPrecision(wordObject.value)
-);
-  },3000)
+//   setTimeout(() => {
+//     getPrecision(wordObject.value)
+//     console.log('presiiddd b'+getPrecision(wordObject.value)
+// );
+//   },3000)
 });
 </script>
 <template>
@@ -180,6 +180,7 @@ onMounted(() => {
 .restart {
   text-align: center;
   color: rgb(223, 113, 50);
+  position: relative;
 }
 .timer {
   font-size: 3rem;
