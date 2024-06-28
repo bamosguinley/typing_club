@@ -11,9 +11,8 @@ let wordObject = ref([]); //Initialiser un tableau d'objet mot
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
-let userInput = ref("");
 let wrongCount= ref(0)
-
+const preventKey=  ["Shift", "CapsLock", "Dead"];
 /**
  * Ajouter chaque objet mot au tableau wordObject
  */
@@ -38,6 +37,9 @@ function storeRandomWord(word) {
 function Input(e) {
   if (!counting.value) {
     counting.value = true;
+  }
+   if (preventKey.includes(e.key)) {
+    return; // Ignorer cette touche et sortir de la fonction
   }
   // Vérifie si wordCounter est inférieur à la longueur totale des mots
   if (wordCounter.value < wordObject.value.length) {
@@ -117,11 +119,11 @@ onMounted(() => {
         currentW: word.isCurrent === true,
       }"
     >
-      <span
+      <span class="letterSpan"
         v-for="(letter, index1) in word.mot.split('')"
         :key="index1"
         :class="{
-          green: index === wordCounter && index1 === letterCounter,
+          green: index === wordCounter && index1 === letterCounter - 1,
         }"
       >
         {{ letter }}
@@ -146,8 +148,8 @@ onMounted(() => {
 </template>
 <style scoped>
 .green {
-  color: rgb(18, 19, 18);
-  background-color: #0f0f0f6c;
+  color: rgb(90, 92, 90);
+  background-color: #5b5e5b6c;
   border-bottom: 1px solid;
 }
 
@@ -185,6 +187,9 @@ onMounted(() => {
 }
 .wrongWord {
   color: #e20606;
+}
+.letterSpan{
+  padding: 0 4px;
 }
 </style>
 
