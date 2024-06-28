@@ -1,6 +1,6 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 const refreshPage = () => {
   location.reload();
 };
@@ -11,9 +11,8 @@ let wordObject = ref([]); //Initialiser un tableau d'objet mot
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
-let succedWord = ref(0);
-const minutes = 2;
-const secondes = 56;
+let userInput = ref("");
+let wrongCount= ref(0)
 
 /**
  * Ajouter chaque objet mot au tableau wordObject
@@ -33,7 +32,6 @@ words.forEach((el) => {
  */
 function storeRandomWord(word) {
   let currentStorage = localStorage.setItem("randomWord", word);
-  console.log(currentStorage);
   let storedRandomWord = currentStorage.getItem("randomWord");
   return storedRandomWord;
 }
@@ -46,45 +44,69 @@ function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
-  console.log(e.key);
-
   // Vérifie si wordCounter est inférieur à la longueur totale des mots
   if (wordCounter.value < wordObject.value.length) {
     // Récupère le mot actuel à tester
     let currentWord = wordObject.value[wordCounter.value].mot;
     //Passer la propriété du mot courant a true pour appliquer une class
-    wordObject.value[wordCounter.value].isCurrent = true;
+        wordObject.value[wordCounter.value].isCurrent = true;
     // Vérifie si letterCounter est inférieur à la longueur du mot actuel
     if (letterCounter.value < currentWord.length) {
       // Récupère la lettre attendue dans le mot actuel
       let expectedLetter = currentWord.charAt(letterCounter.value);
-
       // Compare la lettre entrée avec la lettre attendue
       if (e.key === expectedLetter) {
-        console.log("Exact");
         // Si la lettre est correcte, passe à la lettre suivante
         letterCounter.value++;
-
+        console.log(wrongCount.value);
         // Vérifie si toutes les lettres du mot ont été vérifiées
         if (letterCounter.value === currentWord.length) {
           wordObject.value[wordCounter.value].isFinding = "vrai";
           // console.log("Mot complet: " + currentWord);
+          //Vérifier si le nombre d'erreur par mot est 0
+          console.log(": "+wrongCount.value);
+          if (wrongCount.value===0) {
+             wordObject.value[wordCounter.value].isFinding = "vrai";
+          }
           // Passe au mot suivant
           wordCounter.value++;
+          wordObject.value[wordCounter.value].isCurrent = true;
           letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
+          wrongCount.value = 0; 
         }
+      }
+      /**
+       * Retourner en arrière en cas d'erreur
+       */
+      else if (e.key === "Backspace" && letterCounter.value > 0 ) {
+        wordObject.value[wordCounter.value].isFinding = "";
+        letterCounter.value--;
+        wrongCount.value--;
+          console.log(wrongCount.value);
+        console.log(letterCounter.value);
       } else {
+        letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         let x = wordObject.value[wordCounter.value].attemps++; // Incrementation du nombre de tentative pour chaque mot
         console.log("nombres de mauvaise tentatives " + x);
+        wrongCount.value++;
+        if (letterCounter.value === currentWord.length) {
+          //Vérifier si le nombre d'erreur par mot est 0
+          console.log(": "+wrongCount.value);
+          wordCounter.value++;
+          wordObject.value[wordCounter.value].isCurrent = true;
+          letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
+          wrongCount.value = 0; 
+        } 
+        
       }
     }
   }
 
-  // Si wordCounter a atteint la fin des mots
-  if (wordCounter.value === wordObject.value.length) {
-    // console.log("Tous les mots ont été vérifiés.");
-  }
+  // // Si wordCounter a atteint la fin des mots
+  // if (wordCounter.value === wordObject.value.length) {
+  //   console.log("Tous les mots ont été vérifiés.");
+  // }
 }
 
 
@@ -107,7 +129,15 @@ onMounted(() => {
         currentW: word.isCurrent === true,
       }"
     >
-      {{ word.mot }}
+      <span
+        v-for="(letter, index1) in word.mot.split('')"
+        :key="index1"
+        :class="{
+          green: index === wordCounter && index1 === letterCounter,
+        }"
+      >
+        {{ letter }}
+      </span>
     </span>
   </div>
   <div class="restart">
@@ -127,6 +157,12 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
+.green {
+  color: rgb(18, 19, 18);
+  background-color: #0f0f0f6c;
+  border-bottom: 1px solid;
+}
+
 /* Style pour le contenu du texte */
 .container {
   max-width: 1000px;
@@ -160,7 +196,7 @@ onMounted(() => {
   background-color: #4947473a;
 }
 .wrongWord {
-  background-color: #e20606;
+  color: #e20606;
 }
 </style>
 
