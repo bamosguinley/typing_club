@@ -1,34 +1,25 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onBeforeMount, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 const refreshPage = () => {
   location.reload();
 };
-import getWord, { getObject, setObject } from "@/composable/utils";
+import { getWord,getPrecision } from "@/composable/utils";
+
+let words = getWord(50); //Mots récupérés de façon aléatoire
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
-onBeforeMount(() => {
-setObject(1,getWord(50))
-})
-//Ecouter la frappe dès le chargement de la page
-onMounted(() => {
-  document.addEventListener("keydown", Input);
-  console.log(getObject(1));
-  let words = getObject(1) //Mots récupérés de façon aléatoire
-  /**
- * Ajouter chaque objet mot au tableau wordObject
- */
-words.forEach((el) => {
-  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false });
-});
-});
-
-
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
+let userInput = ref("");
 let wrongCount= ref(0)
 const preventKey=  ["Shift", "CapsLock", "Dead"];
-
+/**
+ * Ajouter chaque objet mot au tableau wordObject
+ */
+words.forEach((el) => {
+  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false ,wrongPerWord: 0});
+});
 
 /**
  * Stocker localement les mots actuel
@@ -93,6 +84,8 @@ function Input(e) {
         letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         wrongCount.value++;
+        wordObject.value[wordCounter.value].wrongPerWord++;
+        console.log("erreur de frappe"+ wordObject.value[wordCounter.value].wrongPerWord);
         if (letterCounter.value === currentWord.length) {
           //Vérifier si le nombre d'erreur par mot est 0
           console.log(": "+wrongCount.value);
@@ -100,8 +93,7 @@ function Input(e) {
           wordObject.value[wordCounter.value].isCurrent = true;
           letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
           wrongCount.value = 0; 
-        } 
-        
+        }   
       }
     }
   }
@@ -111,7 +103,15 @@ function Input(e) {
   //   console.log("Tous les mots ont été vérifiés.");
   // }
 }
-
+//Ecouter la frappe dès le chargement de la page
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+  setTimeout(() => {
+    getPrecision(wordObject.value)
+    console.log('presiiddd b'+getPrecision(wordObject.value)
+);
+  },3000)
+});
 </script>
 <template>
   <div class="container">

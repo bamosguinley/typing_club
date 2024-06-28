@@ -1,9 +1,7 @@
 import data from "./data";
-
-
+import { ref } from "vue";
 
 export const getWord = (nombreMot) => {
-
   let data2 = ref([]);
   let data3 = ref([]);
   let dataAleatoire = ref([]);
@@ -40,8 +38,7 @@ export const getWord = (nombreMot) => {
     }
   });
   return data3.value; // Retourner data3.value en tant que tableau
-}
-
+};
 
 // Fonction pour un décompteur de 3 minutes
 export const chrono = function countdown() {
@@ -66,8 +63,6 @@ export const chrono = function countdown() {
   return formattedTime;
 };
 
-
-
 /*
  *Stocker les données
  */
@@ -82,37 +77,35 @@ export function getObject(key) {
   return storedObj ? JSON.parse(storedObj) : null;
 }
 
-
-
 /**
  * fonction de calcul de précision
  */
 
-const getTotalAttempts = (wordObject) => {
+export const getTotalAttempts = (wordObject) => {
   let totalAttempts = wordObject.value.reduce(
     (acc, el) => acc + el.attemps, // fait la somme de tous les tentatives de chaque objet (mot)
     0
   );
   return totalAttempts;
 };
-export const getPrecision = (totalAttempts, words) => {
-  let precision = ((words.length - totalAttempts) / words.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
+export const getPrecision = (wordObject) => {
+  let totalAttempts = wordObject.value.wrongPerWord.reduce(
+    (acc, el) => acc + el.attemps, 
+    0);
+  let precision =((wordObject.length - totalAttempts) / wordObject.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
   if (precision <= 0) {
     // la précision ne doit pas être en dessous de 0
     precision = 0;
   }
   console.log(precision);
-  succedWord.value = words.length - totalAttempts; //nombre de mots réussis
   return precision; // retour de la précision
 };
-
 
 /**
  * fonction de calcul de la vitesse
  */
-const getSpeed = (totalTipyng,time) => {
-  let speed =Math.floor((totalTipyng/5) / time); // calcul de la vitesse
-  console.log("nombres de mots réussis" +speed);
+export const getSpeed = (totalTipyng, time) => {
+  let speed = Math.floor(totalTipyng / 5 / time); // calcul de la vitesse
+  console.log("nombres de mots réussis" + speed);
   return speed; // retour de la valeur de la vitesse
 };
-console.log(getSpeed(500,3));
