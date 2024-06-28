@@ -1,8 +1,13 @@
 <script setup>
 // Récupération des données de la session de frappe par la props data
-const props = defineProps({
-  data: Object,
-});
+// const props = defineProps({
+//   data: Object,
+// });
+import { ref } from "vue"
+let verif =ref('')
+
+const timeIsUp =ref(1)
+const emits = defineEmits('response',timeIsUp)
 </script>
 
 <template>
@@ -10,9 +15,9 @@ const props = defineProps({
    <div class="result-container">
       <div class="result">
         <h4>Vos statistiques : </h4>
-        <p><span>Vitesse</span> : {{ props.data.speed + " mots/min" }}</p>
-        <p><span>Precision</span> : {{ props.data.precision + " %" }}</p>
-        <p><span>Durée</span> : {{ props.data.time }}</p>
+        <p><span>Vitesse</span> :<!-- {{ props.data.speed + " mots/min" }}--></p>
+        <p><span>Precision</span> : <!--{{ props.data.precision + " %" }}--></p>
+        <p><span>Durée</span> : <!--{{ props.data.time }}--></p>
       </div>
       <div class="btn-reload">
        <a class="btn" href="">Recommencer</a>
@@ -23,8 +28,8 @@ const props = defineProps({
 
 <style scoped>
 .result{
-  padding: 80px;
-  margin: 50px auto;
+  padding: 10px;
+  margin: 5px ;
   border-radius: 50px;
   border: 1px solid;
   background-color: #fff;

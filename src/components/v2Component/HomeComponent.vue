@@ -1,6 +1,10 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onMounted, reactive, ref } from "vue";
+import getWord from "@/composable/utils";
+import ResultComponent from "./ResultComponent.vue";
+
+
 const refreshPage = () => {
   location.reload();
 };
@@ -13,7 +17,8 @@ const wordCounter = ref(0);
 const letterCounter = ref(0);
 let userInput = ref("");
 let wrongCount= ref(0)
-const preventKey=  ["Shift", "CapsLock", "Dead"];
+const timeIsUp = ref(false); // Variable pour vérifier si le temps est écoulé
+
 /**
  * Ajouter chaque objet mot au tableau wordObject
  */
@@ -114,8 +119,9 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="container">
-    <TimerComponent v-if="counting" />
+  
+  <div class="container" v-if="timeIsUp===false">
+    <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
     <span
       class="text"
       v-for="(word, index) in wordObject"
@@ -137,6 +143,7 @@ onMounted(() => {
       </span>
     </span>
   </div>
+  <ResultComponent v-if="timeIsUp===true" />
   <div class="restart">
     <a href="#" @click="storeRandomWord(wordObject)">
       <svg
@@ -168,7 +175,7 @@ onMounted(() => {
   margin: 2rem auto;
   background-color: transparent;
   padding: 2rem;
-  overflow: clip;
+  /* overflow:hidden; */
 }
 .restart {
   text-align: center;
