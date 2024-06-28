@@ -1,18 +1,20 @@
 import data from "./data";
-import { ref } from "vue";
-let data2 = ref([]);
-let data3 = ref([]);
-let dataAleatoire = ref([]);
 
-let count = ref(0);
-const refusedChar = ["œ", "Æ"];
 
-// Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
-data.forEach((element) => {
-  data2.value = data2.value.concat(element.split(/\s/));
-});
 
-const getWord = (nombreMot) => {
+export const getWord = (nombreMot) => {
+
+  let data2 = ref([]);
+  let data3 = ref([]);
+  let dataAleatoire = ref([]);
+  let count = ref(0);
+  const refusedChar = ["œ", "Æ"];
+
+  // Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
+  data.forEach((element) => {
+    data2.value = data2.value.concat(element.split(/\s/));
+  });
+
   // Génére une position aléatoire dans le tableau data2.value
   let position = Math.floor(
     Math.random() * (data2.value.length - nombreMot + 1)
@@ -38,7 +40,7 @@ const getWord = (nombreMot) => {
     }
   });
   return data3.value; // Retourner data3.value en tant que tableau
-};
+}
 
 
 // Fonction pour un décompteur de 3 minutes
@@ -53,9 +55,7 @@ export const chrono = function countdown() {
     // Formatage en mm:ss
     const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
     const formattedSeconds = (seconds < 10 ? "0" : "") + seconds;
-
     formattedTime = `${formattedMinutes}:${formattedSeconds}`;
-
     if (totalSeconds <= 0) {
       clearInterval(intervalId); // Arrête le décompteur une fois le temps écoulé
     } else {
@@ -66,7 +66,7 @@ export const chrono = function countdown() {
   return formattedTime;
 };
 
-export default getWord;
+
 
 /*
  *Stocker les données
@@ -83,3 +83,36 @@ export function getObject(key) {
 }
 
 
+
+/**
+ * fonction de calcul de précision
+ */
+
+const getTotalAttempts = (wordObject) => {
+  let totalAttempts = wordObject.value.reduce(
+    (acc, el) => acc + el.attemps, // fait la somme de tous les tentatives de chaque objet (mot)
+    0
+  );
+  return totalAttempts;
+};
+export const getPrecision = (totalAttempts, words) => {
+  let precision = ((words.length - totalAttempts) / words.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
+  if (precision <= 0) {
+    // la précision ne doit pas être en dessous de 0
+    precision = 0;
+  }
+  console.log(precision);
+  succedWord.value = words.length - totalAttempts; //nombre de mots réussis
+  return precision; // retour de la précision
+};
+
+
+/**
+ * fonction de calcul de la vitesse
+ */
+const getSpeed = (totalTipyng,time) => {
+  let speed =Math.floor((totalTipyng/5) / time); // calcul de la vitesse
+  console.log("nombres de mots réussis" +speed);
+  return speed; // retour de la valeur de la vitesse
+};
+console.log(getSpeed(500,3));
