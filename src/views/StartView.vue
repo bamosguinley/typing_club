@@ -8,7 +8,7 @@ let isloadingTimeOut = ref(true);
 onMounted(() => {
   // Afficher l'interface de frappe deux secondes après le chargement de la vue
   setTimeout(() => {
-    isloadingTimeOut.value = true;
+   isloadingTimeOut = true;
   }, 2000);
 });
 </script>

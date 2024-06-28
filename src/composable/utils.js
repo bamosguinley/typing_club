@@ -67,3 +67,7 @@ export function storeRandomWord(word) {
     return storedRandomWord;
   });
 }
+
+
+
+const audio = new Audio()

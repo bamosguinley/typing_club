@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import IconeTime from "./icons/IconeTime.vue";
 import ResultComponent from "./ResultComponent.vue";
+import PageDeBord from "./PageDeBord.vue";
 
 const words = ref("");
 const wordsArray = ref([]);
@@ -21,8 +22,10 @@ const resultData = ref({
 /**
  * Fonction permettant d'obtenir les mots à travvers un API
  */
+
+
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/5")
+  fetch("https://trouve-mot.fr/api/random/20")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((element, i) => {
@@ -78,6 +81,8 @@ function getUserInput(e) {
 }
 
 /** Compter le temps en minutes et en secondes */
+
+
 function timer() {
   const intervalId = setInterval(() => {
     if (seconds.value === 60) {
@@ -89,6 +94,8 @@ function timer() {
     if (count === wordsArray.value.length - 1) clearInterval(intervalId);
   }, 1000);
 }
+
+
 
 /** Calculer la précision */
 function getPrecision() {
@@ -133,9 +140,13 @@ onMounted(() => {
   window.addEventListener("keydown", stopSpaceKeyScrolling);
   document.addEventListener("keydown", getUserInput);
 });
+
+const Visible = ref(false);
+
 </script>
 
 <template>
+<!-- <PageDeBord v-if="Visible.value === true"/> -->
   <div v-if="isResultVisible">
     <!-- resultData est l'objet contenant la vitesse, la précision et la durée de la session -->
     <ResultComponent :data="resultData" />
