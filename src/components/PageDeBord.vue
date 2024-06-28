@@ -30,7 +30,7 @@ onMounted(() => {
   // Afficher l'interface de frappe trois secondes après le chargement de la vue
   setTimeout(() => {
     display.value = true;
-  }, 3000);
+  }, 1000);
 });
 </script>
 <style scoped>
@@ -47,7 +47,7 @@ onMounted(() => {
   background-color: rgba(160, 235, 210, 0.34);
   box-shadow: 8px 8px 10px rgba(0, 247, 255, 0.436);
   animation-name: example;
-  animation-duration: 4s;
+  animation-duration: 2s;
 }
 
 @keyframes example {
