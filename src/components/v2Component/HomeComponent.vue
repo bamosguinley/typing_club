@@ -1,24 +1,34 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onBeforeMount, onMounted, reactive, ref } from "vue";
 const refreshPage = () => {
   location.reload();
 };
-import getWord from "@/composable/utils";
-
-let words = getWord(50); //Mots récupérés de façon aléatoire
+import getWord, { getObject, setObject } from "@/composable/utils";
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
-const counting = ref(false);
-const wordCounter = ref(0);
-const letterCounter = ref(0);
-let wrongCount= ref(0)
-const preventKey=  ["Shift", "CapsLock", "Dead"];
-/**
+onBeforeMount(() => {
+setObject(1,getWord(50))
+})
+//Ecouter la frappe dès le chargement de la page
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+  console.log(getObject(1));
+  let words = getObject(1) //Mots récupérés de façon aléatoire
+  /**
  * Ajouter chaque objet mot au tableau wordObject
  */
 words.forEach((el) => {
   wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false });
 });
+});
+
+
+const counting = ref(false);
+const wordCounter = ref(0);
+const letterCounter = ref(0);
+let wrongCount= ref(0)
+const preventKey=  ["Shift", "CapsLock", "Dead"];
+
 
 /**
  * Stocker localement les mots actuel
@@ -101,10 +111,7 @@ function Input(e) {
   //   console.log("Tous les mots ont été vérifiés.");
   // }
 }
-//Ecouter la frappe dès le chargement de la page
-onMounted(() => {
-  document.addEventListener("keydown", Input);
-});
+
 </script>
 <template>
   <div class="container">

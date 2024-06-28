@@ -40,9 +40,6 @@ const getWord = (nombreMot) => {
   return data3.value; // Retourner data3.value en tant que tableau
 };
 
-// export default getWord;
-
-// export default getWord;
 
 // Fonction pour un décompteur de 3 minutes
 export const chrono = function countdown() {
@@ -74,10 +71,15 @@ export default getWord;
 /*
  *Stocker les données
  */
-export function storeRandomWord(word) {
-  localStorage.setItem("randomWord", word);
-  window.addEventListener("load", () => {
-    const storedRandomWord = localStorage.getItem("randomWord");
-    return storedRandomWord;
-  });
+// Fonction pour définir un objet dans le stockage local
+export function setObject(key, obj) {
+  localStorage.setItem(key, JSON.stringify(obj));
 }
+
+// Fonction pour récupérer un objet depuis le stockage local
+export function getObject(key) {
+  const storedObj = localStorage.getItem(key);
+  return storedObj ? JSON.parse(storedObj) : null;
+}
+
+
