@@ -4,6 +4,7 @@ body {
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
   font-family:'Times New Roman', Times, serif;
   background-color:#f6dec8;
+  margin: 0;
 }
 @font-face {
   font-family: "Playwrite";

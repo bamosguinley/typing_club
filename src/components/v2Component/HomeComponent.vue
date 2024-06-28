@@ -39,9 +39,10 @@ onMounted(() => {
   });
   setTimeout(() => {
     return start.value = true;
-  },99000)
+  },2000)
   
 });
+
 
 const typingCount = ref(0);
 const counting = ref(false);
@@ -235,7 +236,7 @@ watch(
   background-color: transparent;
   padding: 3rem;
   margin-bottom: 2rem;
-  /* overflow:hidden; */
+  overflow:clip;
 }
 .restart {
   margin-top: 10rem;
