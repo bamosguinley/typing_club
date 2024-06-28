@@ -110,7 +110,9 @@ onMounted(() => {
 <template>
   
   <div class="container" v-if="timeIsUp===false">
-    <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
+    <div>
+      <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
+    </div>
     <span
       class="text"
       v-for="(word, index) in wordObject"
@@ -164,9 +166,11 @@ onMounted(() => {
   margin: 2rem auto;
   background-color: transparent;
   padding: 2rem;
+  margin-bottom: 2rem;
   /* overflow:hidden; */
 }
 .restart {
+  margin-top: 10rem;
   text-align: center;
   color: rgb(223, 113, 50);
 }
@@ -191,5 +195,6 @@ onMounted(() => {
 .wrongWord {
   color: #e20606;
 }
+
 </style>
 

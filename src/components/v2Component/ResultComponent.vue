@@ -3,11 +3,6 @@
 // const props = defineProps({
 //   data: Object,
 // });
-import { ref } from "vue"
-let verif =ref('')
-
-const timeIsUp =ref(1)
-const emits = defineEmits('response',timeIsUp)
 </script>
 
 <template>
@@ -19,17 +14,19 @@ const emits = defineEmits('response',timeIsUp)
         <p><span>Precision</span> : <!--{{ props.data.precision + " %" }}--></p>
         <p><span>Durée</span> : <!--{{ props.data.time }}--></p>
       </div>
-      <div class="btn-reload">
+      <!-- <div class="btn-reload">
        <a class="btn" href="">Recommencer</a>
-    </div>
+    </div> -->
    </div>
  </main>
 </template>
 
 <style scoped>
+
 .result{
+  max-width: 300px;
   padding: 10px;
-  margin: 5px ;
+  margin: 5rem auto;
   border-radius: 50px;
   border: 1px solid;
   background-color: #fff;
@@ -59,7 +56,7 @@ h4{
 }
 
 
-.btn-reload{
+/* .btn-reload{
   display: flex;
   margin: 0 auto;
   margin-top: 50px;
@@ -69,7 +66,7 @@ h4{
   background-color: cornflowerblue;
   border-radius: 25px;
   max-width: 200px;
-}
+} */
 
 a{
   font-weight: bold;
