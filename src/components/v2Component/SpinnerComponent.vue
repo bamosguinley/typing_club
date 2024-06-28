@@ -8,12 +8,7 @@
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Roboto:100);
 
-body {
-  margin-top: 100px;
-  background-color: #137b85;
-  color: #fff;
-  text-align: center;
-}
+
 
 h1 {
   font: 2em "Roboto", sans-serif;
@@ -25,7 +20,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 300px;
+  /* margin-top: 300px; */
   /* align-content: center;
   justify-content: center; */
 }
