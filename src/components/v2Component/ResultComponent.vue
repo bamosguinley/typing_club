@@ -16,10 +16,6 @@
       (par minutes)
     </div>
     <div class="flex">
-      <div><span>Vitesse</span> :</div>
-      <div>00</div>
-    </div>
-    <div class="flex">
       <div><span>Precision</span> :</div>
       <div>00</div>
     </div>
@@ -37,7 +33,6 @@
   max-width: 300px;
   padding: 2rem;
   margin: 5rem auto;
-  border-radius: none;
   border: 1px solid;
   background-color: #fff;
   text-align: center;
