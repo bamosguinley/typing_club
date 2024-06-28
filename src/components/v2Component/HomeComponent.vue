@@ -193,9 +193,11 @@ function Input(e) {
   margin: 2rem auto;
   background-color: transparent;
   padding: 2rem;
+  margin-bottom: 2rem;
   /* overflow:hidden; */
 }
 .restart {
+  margin-top: 10rem;
   text-align: center;
   color: rgb(223, 113, 50);
   position: relative;

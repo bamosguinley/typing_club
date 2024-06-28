@@ -1,68 +1,131 @@
+
 <script setup>
 // Récupération des données de la session de frappe par la props data
 // const props = defineProps({
 //   data: Object,
 // });
-import { ref } from "vue"
-let verif =ref('')
+import { ref } from "vue";
+let verif = ref("");
 
-const timeIsUp =ref(1)
-const emits = defineEmits('response', timeIsUp)
+const timeIsUp = ref(1);
+const emits = defineEmits("response", timeIsUp);
 const props = defineProps({
   vitesse: Number,
-  precision:Number,
-})
+  precision: Number,
+});
 </script>
 
 <template>
- <main class="container-result">  
-   <div class="result-container">
-      <div class="result">
-        <h4>Vos statistiques : </h4>
-        <p><span>Vitesse</span> :{{ props.vitesse + " mots/min" }}</p>
-        <p><span>Precision</span> : {{ props.precision + " %" }}</p>
-      </div>
-      <div class="btn-reload">
-       <a class="btn" href="">Recommencer</a>
+  <div class="result box shadow">
+    <div>
+      <h1>RESULTATS</h1>
     </div>
-   </div>
- </main>
+    <div class="nbr-mot">
+      <h2>{{ props.vitesse }}</h2>
+      (par minutes)
+    </div>
+    <div class="flex">
+      <div><span>Precision</span> :</div>
+      <div>{{ props.precision + " %" }}</div>
+    </div>
+    <div class="flex">
+      <div><span>Durée</span> :</div>
+      <div>03 : 00</div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.result{
-  padding: 10px;
-  margin: 5px ;
-  border-radius: 50px;
+.result {
+  max-width: 300px;
+  padding: 2rem;
+  margin: 5rem auto;
   border: 1px solid;
   background-color: #fff;
   text-align: center;
-  box-shadow: 5px 5px 12px 12px gray;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   animation: tiper 1s ease-in-out forwards;
   animation-iteration-count: 1;
-
 }
-h4{
+.nbr-mot {
+  color: #ee6907;
+}
+.flex {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #7572726e;
+  padding: 0.5rem;
+}
+
+.flex div > span {
+  text-align: left;
+}
+
+h4 {
   font-weight: bold;
   font-family: "Playwrite";
   font-size: 30px;
   margin-bottom: 50px;
 }
 
+.box {
+  position: relative;
+  transform: translate(0);
+  transform-style: preserve-3d;
+}
 
-  p span{
-    line-height: 50px;
+.shadow:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translate3d(0, 0, -1px);
+  background: conic-gradient(
+    from 90deg at 40% -25%,
+    #ffd700,
+    #f79d03,
+    #ee6907,
+    #e6390a,
+    #de0d0d,
+    #d61039,
+    #cf1261,
+    #c71585,
+    #cf1261,
+    #d61039,
+    #de0d0d,
+    #ee6907,
+    #f79d03,
+    #ffd700,
+    #ffd700,
+    #ffd700
+  );
+  filter: blur(10px);
+  clip-path: polygon(
+    -100vmax -100vmax,
+    100vmax -100vmax,
+    100vmax 100vmax,
+    -100vmax 100vmax,
+    -100vmax -100vmax,
+    0 0,
+    0 100%,
+    100% 100%,
+    100% 0,
+    0 0
+  );
+}
+
+p span {
+  line-height: 50px;
   font-weight: bold;
   font-family: "Playwrite";
   font-size: 20px;
   color: rgb(136, 168, 88);
 }
 
-
-.btn-reload{
+/* .btn-reload{
   display: flex;
   margin: 0 auto;
   margin-top: 50px;
@@ -72,9 +135,9 @@ h4{
   background-color: cornflowerblue;
   border-radius: 25px;
   max-width: 200px;
-}
+} */
 
-a{
+a {
   font-weight: bold;
   color: #fff;
 }
