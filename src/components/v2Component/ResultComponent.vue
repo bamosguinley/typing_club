@@ -7,7 +7,11 @@ import { ref } from "vue"
 let verif =ref('')
 
 const timeIsUp =ref(1)
-const emits = defineEmits('response',timeIsUp)
+const emits = defineEmits('response', timeIsUp)
+const props = defineProps({
+  vitesse: Number,
+  precision:Number,
+})
 </script>
 
 <template>
@@ -15,9 +19,8 @@ const emits = defineEmits('response',timeIsUp)
    <div class="result-container">
       <div class="result">
         <h4>Vos statistiques : </h4>
-        <p><span>Vitesse</span> :<!-- {{ props.data.speed + " mots/min" }}--></p>
-        <p><span>Precision</span> : <!--{{ props.data.precision + " %" }}--></p>
-        <p><span>Durée</span> : <!--{{ props.data.time }}--></p>
+        <p><span>Vitesse</span> :{{ props.vitesse + " mots/min" }}</p>
+        <p><span>Precision</span> : {{ props.precision + " %" }}</p>
       </div>
       <div class="btn-reload">
        <a class="btn" href="">Recommencer</a>

@@ -1,7 +1,7 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onBeforeMount, onMounted, reactive, ref } from "vue";
-import {getObject, getWord, setObject} from "@/composable/utils";
+import {getObject, getPrecision, getSpeed, getWord, setObject} from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
 const preventKey = ["Shift", "CapsLock", "Dead"];
@@ -32,14 +32,23 @@ onMounted(() => {
 //   },3000)
 });
 
-
+const typingCount= ref(0)
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
 let userInput = ref("");
 let wrongCount= ref(0)
 const timeIsUp = ref(false); // Variable pour vérifier si le temps est écoulé
+let vitesse = 0;
+let totalWrong = 0;
+let precision = 0;
 
+if (timeIsUp.value == true) {
+  vitesse = getSpeed(typingCount, 3)
+  totalWrong = wordObject.value.wrongPerWord.reduce((acc, el) => el + acc, 0);
+  precision = getPrecision(totalWrong, wordObject.value);
+
+}
 
 
 /**
@@ -63,6 +72,7 @@ function Input(e) {
    if (preventKey.includes(e.key)) {
     return; // Ignorer cette touche et sortir de la fonction
   }
+  typingCount.value++;
   // Vérifie si wordCounter est inférieur à la longueur totale des mots
   if (wordCounter.value < wordObject.value.length) {
     // Récupère le mot actuel à tester
@@ -128,7 +138,7 @@ function Input(e) {
 </script>
 <template>
   
-  <div class="container" v-if="timeIsUp===false">
+  <div class="container" v-if="timeIsUp===true">
     <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
     <span
       class="text"
@@ -151,7 +161,7 @@ function Input(e) {
       </span>
     </span>
   </div>
-  <ResultComponent v-if="timeIsUp===true" />
+  <ResultComponent v-if="timeIsUp===false" :vitesse="vitesse" :precision="precision"/>
   <div class="restart">
     <a href="#" @click="storeRandomWord(wordObject)">
       <svg

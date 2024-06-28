@@ -88,13 +88,14 @@ export function getObject(key) {
  */
 
 export const getTotalAttempts = (wordObject) => {
+  attemps=wordObject.map(el=>el.w)
   let totalAttempts = wordObject.value.reduce(
     (acc, el) => acc + el.attemps, // fait la somme de tous les tentatives de chaque objet (mot)
     0
   );
   return totalAttempts;
 };
-const getPrecision = (totalAttempts, words) => {
+export const getPrecision = (totalAttempts, words) => {
   let precision = ((words.length - totalAttempts) / words.length) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
   if (precision <= 0) {
     // la précision ne doit pas être en dessous de 0
@@ -108,7 +109,7 @@ const getPrecision = (totalAttempts, words) => {
 /**
  * fonction de calcul de la vitesse
  */
-const getSpeed = (totalTipyng,time) => {
+export const getSpeed = (totalTipyng,time) => {
   let speed =Math.floor((totalTipyng/5) / time); // calcul de la vitesse
   console.log("nombres de mots réussis" +speed);
   return speed; // retour de la valeur de la vitesse
