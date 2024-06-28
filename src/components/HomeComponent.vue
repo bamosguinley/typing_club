@@ -85,7 +85,7 @@ function timer() {
       seconds.value = 0;
     } else if (seconds.value < 60) {
       seconds.value++;
-    }
+    }jhghjjh
     if (count === wordsArray.value.length - 1) clearInterval(intervalId);
   }, 1000);
 }
