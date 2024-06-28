@@ -1,17 +1,38 @@
 <script setup>
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onBeforeMount, onMounted, reactive, ref } from "vue";
-import {getWord} from "@/composable/utils";
+import {getObject, getWord, setObject} from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
 const preventKey = ["Shift", "CapsLock", "Dead"];
 const refreshPage = () => {
   location.reload();
 };
-
-
-let words = getWord(50); //Mots récupérés de façon aléatoire
+let word = ref([]);
 let wordObject = ref([]); //Initialiser un tableau d'objet mot
+onBeforeMount(() => {
+  word.value = getWord(50);
+  if (localStorage.getItem(1)==undefined ) {
+    setObject(1,word.value)
+  }
+})
+
+//Ecouter la frappe dès le chargement de la page
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+  word.value = getObject(1);
+  word.value .forEach((el) => {
+  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false ,wrongPerWord: 0});
+});
+
+//   setTimeout(() => {
+//     getPrecision(wordObject.value)
+//     console.log('presiiddd b'+getPrecision(wordObject.value)
+// );
+//   },3000)
+});
+
+
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
@@ -19,12 +40,7 @@ let userInput = ref("");
 let wrongCount= ref(0)
 const timeIsUp = ref(false); // Variable pour vérifier si le temps est écoulé
 
-/**
- * Ajouter chaque objet mot au tableau wordObject
- */
-words.forEach((el) => {
-  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false ,wrongPerWord: 0});
-});
+
 
 /**
  * Stocker localement les mots actuel
@@ -108,15 +124,7 @@ function Input(e) {
   //   console.log("Tous les mots ont été vérifiés.");
   // }
 }
-//Ecouter la frappe dès le chargement de la page
-onMounted(() => {
-  document.addEventListener("keydown", Input);
-//   setTimeout(() => {
-//     getPrecision(wordObject.value)
-//     console.log('presiiddd b'+getPrecision(wordObject.value)
-// );
-//   },3000)
-});
+
 </script>
 <template>
   
