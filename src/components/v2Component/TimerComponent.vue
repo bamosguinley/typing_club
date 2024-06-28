@@ -13,22 +13,46 @@
 
 <script setup>
 import { ref } from "vue";
+
+
+/*
+Fonction permettant de décompter pendant 03min 00sec
+*/
 // Declaration des constantes
-const minutes = ref("0" + 0);
-const secondes = ref(30);
+
+const count = ref(0);
+const minutes = ref(3);
+const secondes = ref("0"+0);
+
+
+
+
 // stockage de la fonction setInterval dans une variable 
-
 const intervalId = setInterval(() => {
-    secondes.value--;  //Décrémentation des secondes
-    if (secondes.value < 10) {
-        secondes.value = "0" + secondes.value //Formatage des secondes en ajoutant un 0 si les secondes sont inferieures à 10
+    secondes.value--; // Décrémentation des secondes
+    if (secondes.value == -1) { // si la valeur des secondes est égale à -1 , 
+        secondes.value == 0; // on la ramène à 0;
+        secondes.value = 60; // ensuite à 60;
+        secondes.value--; // décrémentation des secondes
+        minutes.value --; // décrémentation des minutes
     }
-    if (secondes.value == 0) {
-        clearInterval(intervalId) // si les secondes viennent à zero la fonction Setinterval s'arrête
-    }
-}, 1000)
 
+    if (secondes.value < 10 ) { // si le nombre de secondes est inférieur à 10 
+        secondes.value = "0" + secondes.value; // le nombre de secondes sera précédé d'un 0
+        // minutes.value="0"+minutes.value;
+    }
+    if(minutes.value<10){
+        minutes.value=minutes.value
+    }
+  
+    if (minutes.value == -1) {
+        minutes.value = 0;
+        secondes.value = "0" + 0;
+    }
+
+}, 1000);
 </script>
+
 
 <style scoped>
 .timer {
