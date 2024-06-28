@@ -8,7 +8,7 @@
       </select>
     </div>
     <div id="level">
-      <label for="difficulté">Choisissez la difficulté du jeu :</label><br />
+      <!-- <label for="difficulté">Choisissez la difficulté du jeu :</label><br />
       <select>
         <option value="facile">Facile</option>
         <option value="moyen">Moyen</option>
@@ -17,12 +17,62 @@
     </div>
     <div class="startclass">
       <router-link class="start" to="/starting">Commencer</router-link>
-    </div>
+    </div> -->
+    <select v-model="selectedOption" @change="executeSelectedFunction">
+            <option value="" disabled selected>Choisissez une option</option>
+            <option v-for="option in options" :key="option.id" :value="option.id">
+              {{ option.label }}
+            </option>
+          </select>
   </div>
   <home-component v-if="display === false" />
 </template>
 
 <script setup>
+
+function data() {
+    return {
+      options: [
+        { id: 1, label: 'Option 1' },
+        { id: 2, label: 'Option 2' },
+        { id: 3, label: 'Option 3' }
+      ],
+      selectedOption: null
+    };
+  }
+
+    function option1Function() {
+      // Logique à exécuter pour l'option 1
+      console.log('Option 1 sélectionnée');
+    }
+    function option2Function() {
+      // Logique à exécuter pour l'option 2
+      console.log('Option 2 sélectionnée');
+    }
+    function option3Function() {
+      // Logique à exécuter pour l'option 3
+      console.log('Option 3 sélectionnée');
+    }
+  
+  
+    function executeSelectedFunction() {
+      switch (this.selectedOption) {
+        case 1:
+          this.option1Function();
+          break;
+        case 2:
+          this.option2Function();
+          break;
+        case 3:
+          this.option3Function();
+          break;
+        default:
+          // Gérer les cas d'erreur ou des valeurs non attendues
+          break;
+      }
+    }
+  
+  
 import { ref, onMounted } from "vue";
 import HomeComponent from "./HomeComponent.vue";
 let display = ref(true);
