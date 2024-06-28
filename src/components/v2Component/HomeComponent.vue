@@ -1,51 +1,3 @@
-<template>
-  <div class="global">
-    <div class="loader" v-if="!start">
-      <SpinnerComponent />
-    </div>
-    <div class="contenu" v-else>
-      <div class="container" v-if="!timeIsUp" ref="containerRef">
-        <TimerComponent v-if="counting" @sendTimeOver="(el) => (timeIsUp = el)" />
-        <span
-          class="text"
-          v-for="(word, index) in wordObject"
-          :key="index"
-          :class="{
-            writeWord: word.isFinding === 'vrai',
-            wrongWord: word.isFinding === 'faux',
-            currentW: word.isCurrent,
-          }"
-        >
-          <span
-            class="letterSpan"
-            v-for="(letter, index1) in word.mot.split('')"
-            :key="index1"
-            :class="{ green: index === wordCounter && index1 === letterCounter }"
-          >
-            {{ letter }}
-          </span>
-        </span>
-      </div>
-      <ResultComponent v-if="timeIsUp" :vitesseProps="vitesse" :precisionProps="precision" />
-      <div class="restart">
-        <a href="" @click.prevent="refreshPage">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="60px"
-            viewBox="0 -960 960 960"
-            width="60px"
-            fill="#df7132"
-          >
-            <path
-              d="M440-122q-121-15-200.5-105.5T160-440q0-66 26-126.5T260-672l57 57q-38 34-57.5 79T240-440q0 88 56 155.5T440-202v80Zm80 0v-80q87-16 143.5-83T720-440q0-100-70-170t-170-70h-3l44 44-56 56-140-140 140-140 56 56-44 44h3q134 0 227 93t93 227q0 121-79.5 211.5T520-122Z"
-            />
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, watch, onBeforeMount, onMounted } from "vue";
 import TimerComponent from "../v2Component/TimerComponent.vue";
@@ -73,15 +25,15 @@ const timeIsUp = ref(false);
 let vitesse = 0;
 let totalWrong = 0;
 let precision = 0;
-
+let nbrSecondActuel = ref(0);
 const containerRef = ref(null);
+let endBeforeTime = ref(false);
 
 onBeforeMount(() => {
-  word.value = getWord(50);
+  word.value = getWord(20);
   if (!localStorage.getItem(1)) {
     setObject(1, word.value);
   }
- 
 });
 
 onMounted(() => {
@@ -94,7 +46,6 @@ onMounted(() => {
       isCurrent: false,
       wrongPerWord: 0,
     });
-    
   });
   setTimeout(() => {
     start.value = true;
@@ -104,12 +55,12 @@ onMounted(() => {
 function refreshPage() {
   location.reload();
 }
-const autoScrollIfNeeded = () => {
-  if (containerRef.value) {
-    const container = containerRef.value;
-    container.scrollTop = container.scrollHeight;
-  }
-};
+// const autoScrollIfNeeded = () => {
+//   if (containerRef.value) {
+//     const container = containerRef.value;
+//     container.scrollTop = container.scrollHeight;
+//   }
+// };
 
 function Input(e) {
   if (!counting.value) {
@@ -119,12 +70,7 @@ function Input(e) {
     return;
   }
   typingCount.value++;
-  
-  if (wordCounter.value === getWord(1).length) {
-  console.log( getWord(1).length+'gg');
-  timeIsUp.value = true;
-
-}
+  console.log(endBeforeTime.value);
   if (wordCounter.value < wordObject.value.length) {
     let currentWord = wordObject.value[wordCounter.value].mot;
 
@@ -164,12 +110,26 @@ function Input(e) {
       }
     }
   }
+
+  if (wordCounter.value === totalWordLength - 1) {
+    console.log("fin fin fin fin fin");
+    console.log( "gg");
+    endBeforeTime.value = true;
+    timeIsUp.value = true;
+  }
 }
+console.log(wordCounter.value);
+console.log(Object.keys(getWord(20)).length);
+let totalWordLength = Object.keys(getWord(20)).length;
+//Vérifier si le nombre de mot est égal a la longueur total des mots pour effectuer le calcul
 
 watch(
   () => timeIsUp.value,
   () => {
-    vitesse = getSpeed(wordCounter.value, 3);
+    vitesse = getSpeed(
+      wordCounter.value,
+      Math.floor(nbrSecondActuel.value / 60)
+    );
     const attempts = wordObject.value.map((el) => el.wrongPerWord);
     const totalCaract = wordObject.value
       .map((el) => el.mot.length)
@@ -188,8 +148,69 @@ watch(
 //     }
 //   }
 // );
- 
 </script>
+
+
+
+<template>
+  <div class="global">
+    <div class="loader" v-if="!start">
+      <SpinnerComponent />
+    </div>
+    <div class="contenu" v-else>
+      <div class="container" v-if="!timeIsUp" ref="containerRef">
+        <TimerComponent
+          v-if="counting"
+          @sendTimeOver="(el) => (timeIsUp = el)"
+          @getCurrentSec="(el) => (nbrSecondActuel = el)"
+          :endBeforeTime="endBeforeTime"
+        />
+        <span
+          class="text"
+          v-for="(word, index) in wordObject"
+          :key="index"
+          :class="{
+            writeWord: word.isFinding === 'vrai',
+            wrongWord: word.isFinding === 'faux',
+            currentW: word.isCurrent,
+          }"
+        >
+          <span
+            class="letterSpan"
+            v-for="(letter, index1) in word.mot.split('')"
+            :key="index1"
+            :class="{
+              green: index === wordCounter && index1 === letterCounter,
+            }"
+          >
+            {{ letter }}
+          </span>
+        </span>
+      </div>
+      <ResultComponent
+        v-if="timeIsUp"
+        :vitesseProps="vitesse"
+        :precisionProps="precision"
+      />
+      <div class="restart">
+        <a href="" @click.prevent="refreshPage">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="60px"
+            viewBox="0 -960 960 960"
+            width="60px"
+            fill="#df7132"
+          >
+            <path
+              d="M440-122q-121-15-200.5-105.5T160-440q0-66 26-126.5T260-672l57 57q-38 34-57.5 79T240-440q0 88 56 155.5T440-202v80Zm80 0v-80q87-16 143.5-83T720-440q0-100-70-170t-170-70h-3l44 44-56 56-140-140 140-140 56 56-44 44h3q134 0 227 93t93 227q0 121-79.5 211.5T520-122Z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .green {
@@ -201,12 +222,12 @@ watch(
 .container {
   max-width: 1000px;
   width: 100%;
-  height: 300px;
+  height: auto;
   margin: 2rem auto;
   background-color: transparent;
   padding: 3rem;
   margin-bottom: 2rem;
-  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 .restart {
