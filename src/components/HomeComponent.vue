@@ -3,9 +3,6 @@ import { onMounted, ref, watch } from "vue";
 import IconeTime from "./icons/IconeTime.vue";
 import ResultComponent from "./ResultComponent.vue";
 
-const words = ref("");
-const lettersArray = ref([]);
-
 // game params
 const gameTypes = {
   blocking: "blockingGame",
@@ -28,7 +25,7 @@ const minutes = ref(0);
 const seconds = ref(0);
 
 // variables statistisues
-let countWords = ref();
+let countWords = ref(0);
 let countletters = 0;
 let countAttempts = 0;
 
@@ -55,7 +52,7 @@ const resultData = ref({
 /* FONCTIONS */
 /** Fonction permettant d'obtenir les mots à travvers un API */
 async function getWorlds() {
-  fetch("https://trouve-mot.fr/api/random/20")
+  fetch("https://trouve-mot.fr/api/random/10")
     .then((response) => response.json())
     .then((data) => {
       // retourne les mots sous forme d'objets dans le tableau wordsArray
@@ -94,7 +91,7 @@ async function getWorlds() {
         }
       });
       // mémoriser le nombre de mot
-      countWords = wordsArray.value.length;
+      countWords.value = wordsArray.value.length;
     });
 }
 
@@ -123,136 +120,117 @@ function startGame() {
 /** Formate le temps effectué en un format mm:ss */
 function formatTime(t) {
   if (t < 10) {
-    return `0${t}`;
+    return `0${Math.floor(t)}`;
   }
-  return t;
+  return Math.floor(t);
 }
 
 /** initie un jeux bloqusant */
 function startBlockingTyping(e) {
-  if (currentTimerType.value === timerTypes.chrono && minutes.value == 0 && seconds.value == 0) {
-    document.removeEventListener("keydown", startBlockingTyping);
-    document.removeEventListener("keydown", stopSpaceKeyScrolling);
-    displayResult();
-    return;
-  }
-  // Détecter la toute première frappe
-  if (startCounter.value < 1) {
-    startCounter.value++;
-  }
-  if (
-    wordCount === wordsArray.value.length - 1 &&
-    count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1
-  ) {
-    // supprimer les écouteurs d'évênements
-    document.removeEventListener("keydown", startBlockingTyping);
-    document.removeEventListener("keydown", stopSpaceKeyScrolling);
-    // Afficher le composant ResultComponent après la dernière frappe
-    displayResult();
-  } else {
-    if (!keysToSkip2.includes(e.key)) {
-      if (wordsArray.value[wordCount].letters.length !== count) {
-        if (wordsArray.value[wordCount].letters[count].char === e.key) {
-          wordsArray.value[wordCount].letters[count].tentative > 0
-            ? (wordsArray.value[wordCount].letters[count].isRight =
-              "succesAfterManyAttempts")
-            : (wordsArray.value[wordCount].letters[count].isRight =
-              "successAfterOneAttempt");
-          count++;
-        } else {
-          wordsArray.value[wordCount].letters[count].isRight = "failed";
-          wordsArray.value[wordCount].letters[count].tentative++;
-        }
-      } else {
-        wordCount++;
-        count = 0;
-        if (wordsArray.value[wordCount].letters[count].char === e.key) {
-          wordsArray.value[wordCount].letters[count].isRight =
-            "successAfterOneAttempt";
-          count++;
-        } else {
-          wordsArray.value[wordCount].letters[count].isRight = "failed";
-          wordsArray.value[wordCount].letters[count].tentative++;
-        }
-      }
+  if (!keysToSkip2.includes(e.key)) {
+    // Détecter la toute première frappe
+    if (startCounter.value < 1) {
+      startCounter.value++;
     }
+
+    if (wordsArray.value[wordCount].letters[count].char === e.key) {
+      wordsArray.value[wordCount].letters[count].tentative > 0
+        ? (wordsArray.value[wordCount].letters[count].isRight =
+          "succesAfterManyAttempts")
+        : (wordsArray.value[wordCount].letters[count].isRight =
+          "successAfterOneAttempt");
+
+      if (count < wordsArray.value[wordCount].letters.length - 1) { // si on est pas sur la dernière lettre d'un mot
+        count++;
+      } else {  // si on est sur la dernière lettre d'un mot
+        wordCount++; // passer le compteur au mot suivant
+        count = 0;  // réinitialiser le compteur de lettres
+      }
+    } else {
+      wordsArray.value[wordCount].letters[count].isRight = "failed";
+      wordsArray.value[wordCount].letters[count].tentative++;
+    }
+
+  }
+
+
+  const isChronoEnd = (currentTimerType.value === timerTypes.chrono) && (minutes.value === 0 && seconds.value === 0)
+  const isTooLastLetter = wordCount === wordsArray.value.length - 1 && count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1
+  if (isChronoEnd || isTooLastLetter) {
+    stopGame();
+    return;
   }
 }
 
+
 /** initie un jeux non bloquant */
 function startNoBlockingTyping(e) {
-  if (currentTimerType.value === timerTypes.chrono && minutes.value == 0 && seconds.value == 0) {
-    document.removeEventListener("keydown", startBlockingTyping);
-    document.removeEventListener("keydown", stopSpaceKeyScrolling);
-    displayResult();
-    return;
-  }
-  // Détecter la toute première frappe
-  if (startCounter.value < 1) {
-    startCounter.value++;
-  }
-  if (
-    wordCount === wordsArray.value.length - 1 &&
-    count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1
-  ) {
-    // supprimer les écouteurs d'évênements
-    document.removeEventListener("keydown", startBlockingTyping);
-    document.removeEventListener("keydown", stopSpaceKeyScrolling);
-    console.log("CEST LA FIN", wordsArray.value);
-    // Afficher le composant ResultComponent après la dernière frappe
-    displayResult();
-  } else {
-    // condition de suppression
-    if (e.key === "Backspace") {
-      // à la première lettre, on retire le style lié à isRight sans décrémenter count
-      if (wordCount === 0 && count === 0) {
+  // si on appuie sur la touche de suppression
+  if (e.key === "Backspace") {
+    // à la première lettre, on retire le style lié à isRight sans décrémenter count
+    if (wordCount === 0) {
+      if (count === 0) {
         wordsArray.value[wordCount].letters[count].isRight = "";
-        console.log("count", count);
-        console.log(
-          "element suppr",
-          wordsArray.value[wordCount].letters[count].char
-        );
-        // après le premier caractère on décrémente count puis on retire le style lié à isRight
       } else {
-        if (count !== 0) {
-          wordsArray.value[wordCount].letters[--count].isRight = "";
-          console.log("count", count);
-          console.log(
-            "element suppr",
-            wordsArray.value[wordCount].letters[count].char
-          );
-        }
+        wordsArray.value[wordCount].letters[--count].isRight = "";
       }
-    } else {
-      if (!keysToSkip1.includes(e.key)) {
-        // consition de non prises en comptes des touches insensibles
-        if (wordsArray.value[wordCount].letters.length !== count) {
-          if (wordsArray.value[wordCount].letters[count].char === e.key) {
-            wordsArray.value[wordCount].letters[count].tentative > 0
-              ? (wordsArray.value[wordCount].letters[count].isRight =
-                "succesAfterManyAttempts")
-              : (wordsArray.value[wordCount].letters[count].isRight =
-                "successAfterOneAttempt");
-          } else {
-            wordsArray.value[wordCount].letters[count].isRight = "failed";
-            wordsArray.value[wordCount].letters[count].tentative++;
-          }
-          count++;
-        } else {
-          wordCount++;
-          count = 0;
-          if (wordsArray.value[wordCount].letters[count].char === e.key) {
-            wordsArray.value[wordCount].letters[count].isRight =
-              "successAfterOneAttempt";
-            count++;
-          } else {
-            wordsArray.value[wordCount].letters[count].isRight = "failed";
-            wordsArray.value[wordCount].letters[count].tentative++;
-          }
-        }
+      // après le premier caractère on décrémente count puis on retire le style lié à isRight
+    } else if (wordCount > 0) {
+      if (count === 0) {
+        // à la première lettre d'un mot supérieur ou égal au deuxième, à la suppression on retourne sur le mot précédent
+        --wordCount
+        count = wordsArray.value[wordCount].letters.length - 1;
+        wordsArray.value[wordCount].letters[count].isRight = "";
+      } else {
+        wordsArray.value[wordCount].letters[--count].isRight = "";
+      }
+    }
+  } else {
+    // condition de non prises en comptes des touches insensibles
+    if (!keysToSkip1.includes(e.key)) {
+      // Détecter la toute première frappe
+      if (startCounter.value < 1) {
+        startCounter.value++;
+      }
+
+      if (wordsArray.value[wordCount].letters[count].char === e.key) {
+        wordsArray.value[wordCount].letters[count].tentative > 0
+          ? (wordsArray.value[wordCount].letters[count].isRight =
+            "succesAfterManyAttempts")
+          : (wordsArray.value[wordCount].letters[count].isRight =
+            "successAfterOneAttempt");
+      } else {
+        wordsArray.value[wordCount].letters[count].isRight = "failed";
+        wordsArray.value[wordCount].letters[count].tentative++;
+      }
+
+      if (count < wordsArray.value[wordCount].letters.length - 1) { // si on est pas sur la dernière lettre d'un mot
+        count++;
+      } else {  // si on est sur la dernière lettre d'un mot
+        wordCount++; // passer le compteur au mot suivant
+        count = 0;  // réinitialiser le compteur de lettres
       }
     }
   }
+
+  const isChronoEnd = (currentTimerType.value === timerTypes.chrono) && (minutes.value === 0 && seconds.value === 0)
+  const isTooLastLetter = (wordCount === wordsArray.value.length - 1) && (count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1)
+  // si le type de decompte est chrono et qu'il s'est arrêté ou si on est sur la toute dernière lettre
+  if (isChronoEnd || isTooLastLetter) {
+    stopGame();
+  }
+}
+
+function stopGame() {
+  // supprimer les écouteurs d'évênements
+  if (currentGameType === gameTypes.blocking) {
+    document.removeEventListener("keydown", startBlockingTyping);
+  } else {
+    document.removeEventListener("keydown", startNoBlockingTyping);
+  }
+  document.removeEventListener("keydown", stopSpaceKeyScrolling);
+  // Afficher le composant ResultComponent après la dernière frappe
+  displayResult();
 }
 
 /** compte le temps en minutes et en secondes */
@@ -264,7 +242,7 @@ function timer() {
     } else if (seconds.value < 60) {
       seconds.value++;
     }
-    if (count === lettersArray.value.length - 1) clearInterval(intervalId);
+    if (count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1) clearInterval(intervalId);
   }, 1000);
 }
 
@@ -286,7 +264,15 @@ function chrono() {
 
 /** compte le nombre de mots tapés */
 function getOfTypedWordsNumber() {
-  return wordCount
+  if (currentTimerType.value === timerTypes.chrono) {
+    const nwords = wordCount + 1;
+    console.log("chrono wordCount", wordCount);
+    if (nwords > 0) return (nwords + 3) / 2
+    return nwords;
+  } else {
+    console.log("timer wordCount", countWords.value - (countWords.value - 1));
+    return countWords.value - (countWords.value - 1)
+  }
 }
 
 /** calcule la précision */
@@ -300,12 +286,16 @@ function getPrecision() {
     });
     // compter le nombre de lettres
     countletters += word.letters.length;
-  });
 
+  });
   // compter les tentatives
   countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
-  if (Math.floor(((countletters - countAttempts) * 100) / countletters) > 0) {
-    return Math.floor(((countletters - countAttempts) * 100) / countletters);
+
+  console.log("countletters", countletters);
+  console.log("countAttempts", countAttempts);
+  console.log("Precision", ((countletters - countAttempts) / countletters) * 100);
+  if (Math.floor(((countletters - countAttempts) / countletters) * 100) > 0) {
+    return Math.floor(((countletters - countAttempts) / countletters) * 100);
   }
   return 0;
 }
@@ -313,11 +303,14 @@ function getPrecision() {
 /** calcule la vitesse */
 function getSpeed() {
   if (currentTimerType.value === timerTypes.chrono) {
-    const countMinutes = minutes.value + seconds.value / 60;
+
+    const countMinutes = minutes.value + (seconds.value / 60);
     const secs = (fixedMaxChrono - countMinutes) * 60
-    minutes.value = 0;
-    seconds.value = secs
-    return Math.floor(getOfTypedWordsNumber() / fixedMaxChrono - countMinutes);
+    const speed = Math.floor(getOfTypedWordsNumber() / (fixedMaxChrono - countMinutes));
+    minutes.value = parseInt(secs / 60);
+    seconds.value = ((secs / 60) - parseInt(secs / 60)) * 60
+    console.log("vitesse", speed, "temps", fixedMaxChrono - countMinutes,);
+    return speed
   } else {
     const countMinutes = minutes.value + seconds.value / 60;
     return Math.floor(getOfTypedWordsNumber() / countMinutes);
@@ -361,7 +354,7 @@ onMounted(() => {
 <template>
   <div>
     <div v-if="isGameParamsComponentVisible" class="params-container">
-      <h2>Choisir paramètres du jeux {{ currentGameType }}</h2>
+      <h2>Choisir paramètres du jeux</h2>
       <div class="radios-groupes-container">
         <div>
           <h3>Type de jeux</h3>
@@ -372,7 +365,7 @@ onMounted(() => {
           <label for="blocking">Bloquant</label>
         </div>
         <div>
-          <h3>Type de décompte : {{ currentTimerType }} </h3>
+          <h3>Type de décompte :</h3>
           <input type="radio" id="free" value="free" v-model="currentTimerType">
           <label for="free">Libre</label>
           <br>
@@ -498,15 +491,20 @@ onMounted(() => {
 }
 
 .params-container {
-  margin: 20px;
-  padding: 20px;
+  padding: 12px;
+  font-family: "Playwrite";
+  font-size: 15px;
+  margin: 50px auto;
+  border-radius: 10%;
+  box-shadow: 5px 5px 12px gray;
   background-color: #fff;
-  border-radius: 12px;
+  animation: tiper 3s ease-in-out forwards;
+  animation-iteration-count: 1;
 }
 
 .params-container button {
   font-size: 20px;
-  padding: 8px;
+  padding: 5px;
   font-weight: bold;
   color: #fff;
   border: none;
@@ -518,19 +516,48 @@ onMounted(() => {
 }
 
 .radios-groupes-container label {
-  margin-bottom: 20px;
-  font-size: 16px;
-  padding: 5px;
+  margin-bottom: 15px;
+  /* padding: 5px; */
   cursor: pointer;
-  color: #fff;
-  border: none;
-  background-color: #0275d8;
+  /* border: 1px solid #0275d8; */
 }
 
 .radios-groupes-container input {
-  margin-bottom: 20px;
-  padding: 5px;
+  margin-bottom: 10px;
+  /* padding: 5px; */
   width: 100px;
   cursor: pointer;
+}
+
+@keyframes tiper {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(-100);
+  }
+
+  40% {
+    transform: translateY(-50px);
+  }
+
+  60% {
+    transform: translateY(0px);
+  }
+
+
+  15% {
+    transform: translateY(70px);
+  }
+}
+
+.result-container h4 {
+  text-decoration: double;
+}
+
+.result-container span {
+  color: rgb(31, 190, 31);
 }
 </style>
