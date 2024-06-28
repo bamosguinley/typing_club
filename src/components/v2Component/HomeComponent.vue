@@ -138,7 +138,19 @@ function Input(e) {
   //   console.log("Tous les mots ont été vérifiés.");
   // }
 }
-
+// Fonction pour effectuer le défilement automatique si nécessaire
+const autoScrollIfNeeded = () => {
+  if (containerRef.value) {
+    const container = containerRef.value;
+    container.scrollTo({
+      left: container.scrollWidth, 
+      behavior: 'smooth', 
+    });
+  }
+};
+ if (wordCounter.value === 1) {
+            autoScrollIfNeeded();
+          }
 // Watcher pour la propriété vitesse
 watch(
   () => timeIsUp.value,
@@ -236,7 +248,7 @@ watch(
   background-color: transparent;
   padding: 3rem;
   margin-bottom: 2rem;
-  overflow:clip;
+  overflow:auto;
 }
 .restart {
   margin-top: 10rem;
