@@ -81,3 +81,34 @@ export function storeRandomWord(word) {
     return storedRandomWord;
   });
 }
+
+
+
+
+
+// fonction du song des bonnes touche touches
+
+const audioValid = new Audio('../composable/assets/songs/COMType_Machine a ecrire touche (ID 2842)_LS.wav');
+
+function playAudioValid() {
+    audioValid.play(); // Démarre la lecture du fichier audio
+}
+// Exemple d'écouteur d'événement sur un bouton
+const goodLetter = document.getElementById('classe de la touche');
+goodLetter.addEventListener('nom de l\'evenement', playAudioValid);
+
+
+
+// fonction du song des mauvaises touches
+const audioFail = new Audio('../composable/assets/songs/FGHTImpt_Coup de poing 12 (ID 2467)_LS.wav');
+
+function playAudioValid() {
+    audioFail.play(); // Démarre la lecture du fichier audio
+}
+// Exemple d'écouteur d'événement sur un bouton
+const wrongLetter = document.getElementById('classe de la touche');
+wrongLetter.addEventListener('nom de l\'evenement', playAudioValid);
+
+
+
+

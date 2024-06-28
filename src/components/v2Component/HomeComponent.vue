@@ -1,4 +1,5 @@
 <script setup>
+
 import TimerComponent from "../v2Component/TimerComponent.vue";
 import { onMounted, ref } from "vue";
 const refreshPage = () => {
