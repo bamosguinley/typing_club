@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch, onBeforeMount, onMounted } from "vue";
-import TimerComponent from "../v2Component/TimerComponent.vue";
 import SpinnerComponent from "../v2Component/SpinnerComponent.vue";
 import {
   getObject,
@@ -22,12 +21,17 @@ const wordCounter = ref(0);
 const letterCounter = ref(0);
 const wrongCount = ref(0);
 const timeIsUp = ref(false);
-let vitesse = 0;
+let vitesse = ref(0);
 let totalWrong = 0;
 let precision = 0;
 let nbrSecondActuel = ref(0);
 const containerRef = ref(null);
 let endBeforeTime = ref(false);
+let startTyping = ref(false);
+const minutes = ref(3);
+let currentSecound = ref(0);
+const secondes = ref("00");
+let intervalId = null;
 
 onBeforeMount(() => {
   word.value = getWord(20);
@@ -55,12 +59,6 @@ onMounted(() => {
 function refreshPage() {
   location.reload();
 }
-// const autoScrollIfNeeded = () => {
-//   if (containerRef.value) {
-//     const container = containerRef.value;
-//     container.scrollTop = container.scrollHeight;
-//   }
-// };
 
 function Input(e) {
   if (!counting.value) {
@@ -69,11 +67,10 @@ function Input(e) {
   if (preventKey.includes(e.key)) {
     return;
   }
+  startTyping.value = true;
   typingCount.value++;
-  console.log(endBeforeTime.value);
   if (wordCounter.value < wordObject.value.length) {
     let currentWord = wordObject.value[wordCounter.value].mot;
-
     wordObject.value[wordCounter.value].isCurrent = true;
 
     if (letterCounter.value < currentWord.length) {
@@ -111,25 +108,17 @@ function Input(e) {
     }
   }
 
-  if (wordCounter.value === totalWordLength - 1) {
-    console.log("fin fin fin fin fin");
-    console.log( "gg");
+  if (wordCounter.value === totalWordLength) {
     endBeforeTime.value = true;
     timeIsUp.value = true;
+    clearInterval(intervalId)
   }
-}
-console.log(wordCounter.value);
-console.log(Object.keys(getWord(20)).length);
-let totalWordLength = Object.keys(getWord(20)).length;
-//Vérifier si le nombre de mot est égal a la longueur total des mots pour effectuer le calcul
-
-watch(
+  watch(
   () => timeIsUp.value,
   () => {
-    vitesse = getSpeed(
-      wordCounter.value,
-      Math.floor(nbrSecondActuel.value / 60)
-    );
+   
+    vitesse.value = getSpeed(wordCounter.value, currentSecound.value / 60);
+    console.log(vitesse.value);
     const attempts = wordObject.value.map((el) => el.wrongPerWord);
     const totalCaract = wordObject.value
       .map((el) => el.mot.length)
@@ -139,18 +128,42 @@ watch(
     localStorage.clear();
   }
 );
+}
 
-// watch(
-//   () => wordCounter.value,
-//   (newValue, oldValue) => {
-//     if (newValue === 2) {
-//       autoScrollIfNeeded();
-//     }
-//   }
-// );
+
+
+watch(
+  () => startTyping.value,
+  (newValue) => {
+    if (newValue) {
+      intervalId = setInterval(() => {
+        secondes.value--;
+
+        if (secondes.value == -1) {
+          secondes.value = 59;
+          minutes.value--;
+        }
+
+        if (secondes.value < 10) {
+          secondes.value = "0" + secondes.value;
+        }
+
+        if (minutes.value == 0 && secondes.value == 0) {
+          clearInterval(intervalId);
+          timeIsUp.value = true;
+        }
+        currentSecound.value++;
+        console.log(currentSecound.value);
+      }, 1000);
+    } else {
+      clearInterval(intervalId);
+      timeIsUp.value = true;
+    }
+  }
+);
+
+let totalWordLength = Object.keys(getWord(20)).length;
 </script>
-
-
 
 <template>
   <div class="global">
@@ -158,13 +171,23 @@ watch(
       <SpinnerComponent />
     </div>
     <div class="contenu" v-else>
-      <div class="container" v-if="!timeIsUp" ref="containerRef">
-        <TimerComponent
-          v-if="counting"
-          @sendTimeOver="(el) => (timeIsUp = el)"
-          @getCurrentSec="(el) => (nbrSecondActuel = el)"
-          :endBeforeTime="endBeforeTime"
-        />
+      <div class="container" v-if="!timeIsUp">
+        <div class="timer-container">
+          <div class="timer" v-if="startTyping">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="48px"
+              viewBox="0 -960 960 960"
+              width="48px"
+              fill="#df7132"
+            >
+              <path
+                d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"
+              />
+            </svg>
+            {{ "0" + minutes }} : {{ secondes }}
+          </div>
+        </div>
         <span
           class="text"
           v-for="(word, index) in wordObject"
@@ -187,11 +210,7 @@ watch(
           </span>
         </span>
       </div>
-      <ResultComponent
-        v-if="timeIsUp"
-        :vitesseProps="vitesse"
-        :precisionProps="precision"
-      />
+      <ResultComponent v-if="timeIsUp" :vitesseProps="vitesse" :precisionProps="precision" :duree="currentSecound"/>
       <div class="restart">
         <a href="" @click.prevent="refreshPage">
           <svg
@@ -210,7 +229,6 @@ watch(
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .green {

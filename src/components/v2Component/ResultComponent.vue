@@ -1,18 +1,24 @@
-
 <script setup>
-// Récupération des données de la session de frappe par la props data
-// const props = defineProps({
-//   data: Object,
-// });
 import { ref, watch } from "vue";
-let verif = ref("");
 
 const timeIsUp = ref(1);
+let time =ref()
 const emits = defineEmits("response", timeIsUp);
 const props = defineProps({
   vitesseProps: Number,
   precisionProps: Number,
+  duree: Number
 });
+/**
+ * Formater la durée en mm:ss
+ * @param seconds 
+ */
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
 const vitesseValue = ref( props.vitesseProps); // Variable pour stocker la vitesse
 const precisionValue = ref(props.precisionProps);
 
@@ -23,7 +29,11 @@ const precisionValue = ref(props.precisionProps);
 
      // Watcher pour la propriété precision
     watch(() => props.precisionProps, (newValue) => 
-      precisionValue.value = newValue// Mettre à jour la variable precisionValue
+    {
+      precisionValue.value = newValue
+     time.value= formatTime(props.duree)
+    
+    }// Mettre à jour la variable precisionValue
 
     );
 
@@ -35,7 +45,7 @@ const precisionValue = ref(props.precisionProps);
       <h1>RESULTATS</h1>
     </div>
     <div class="nbr-mot">
-      <h2>{{vitesseValue}}</h2>
+      <h2>{{vitesseValue}} mots</h2>
       (par minutes)
     </div>
     <div class="flex">
@@ -44,7 +54,7 @@ const precisionValue = ref(props.precisionProps);
     </div>
     <div class="flex">
       <div><span>Durée</span> :</div>
-      <div>03:00</div>
+      <div>{{time}}</div>
     </div>
   </div>
 </template>
