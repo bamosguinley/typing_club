@@ -7,11 +7,11 @@ import {
   getSpeed,
   getWord,
   setObject,
+  typingSong,
 } from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
 const preventKey = ["Shift", "CapsLock", "Dead"];
-
 const word = ref([]);
 const start = ref(false);
 const wordObject = ref([]);
@@ -25,7 +25,6 @@ let vitesse = ref(0);
 let totalWrong = 0;
 let precision = 0;
 let mooveCar = ref(0);
-const containerRef = ref(null);
 let endBeforeTime = ref(false);
 let startTyping = ref(false);
 const minutes = ref(3);
@@ -61,6 +60,7 @@ function refreshPage() {
 }
 
 function Input(e) {
+  typingSong();
   if (!counting.value) {
     counting.value = true;
   }
@@ -258,13 +258,11 @@ let totalWordLength = Object.keys(getWord(20)).length;
   background-color: #5b5e5b6c;
   border-bottom: 1px solid;
 }
-
 .container {
   max-width: 1000px;
   width: 100%;
   height: auto;
   margin: 2rem auto;
-  background-color: transparent;
   padding: 3rem;
   margin-bottom: 2rem;
 }
@@ -273,7 +271,6 @@ let totalWordLength = Object.keys(getWord(20)).length;
   display: flex;
   flex-wrap: wrap;
   margin-right: 10px;
-  line-height: 1rem;
 }
 .restart {
   margin-top: 10rem;
@@ -281,7 +278,6 @@ let totalWordLength = Object.keys(getWord(20)).length;
   color: rgb(223, 113, 50);
   position: relative;
 }
-
 .text {
   font-size: 2rem;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
