@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeMount, onMounted } from "vue";
+import { ref, watch, onBeforeMount, onMounted, computed } from "vue";
 import SpinnerComponent from "../v2Component/SpinnerComponent.vue";
 import {
   getObject,
@@ -24,7 +24,7 @@ const timeIsUp = ref(false);
 let vitesse = ref(0);
 let totalWrong = 0;
 let precision = 0;
-let nbrSecondActuel = ref(0);
+let mooveCar = ref(0);
 const containerRef = ref(null);
 let endBeforeTime = ref(false);
 let startTyping = ref(false);
@@ -45,7 +45,7 @@ onMounted(() => {
   word.value = getObject(1);
   word.value.forEach((el) => {
     wordObject.value.push({
-      mot: el + " ",
+      mot: el,
       isFinding: "",
       isCurrent: false,
       wrongPerWord: 0,
@@ -64,6 +64,9 @@ function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
+  if (e.code === "Space") {
+    e.preventDefault();
+  }
   if (preventKey.includes(e.key)) {
     return;
   }
@@ -78,7 +81,7 @@ function Input(e) {
 
       if (e.key === expectedLetter) {
         letterCounter.value++;
-
+        mooveCar.value++;
         if (letterCounter.value === currentWord.length) {
           if (wrongCount.value === 0) {
             wordObject.value[wordCounter.value].isFinding = "vrai";
@@ -96,6 +99,7 @@ function Input(e) {
         letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         wrongCount.value++;
+
         wordObject.value[wordCounter.value].wrongPerWord++;
 
         if (letterCounter.value === currentWord.length) {
@@ -108,29 +112,26 @@ function Input(e) {
     }
   }
 
-  if (wordCounter.value === totalWordLength) {
+  if (wordCounter.value == totalWordLength - 1) {
     endBeforeTime.value = true;
     timeIsUp.value = true;
-    clearInterval(intervalId)
+    clearInterval(intervalId);
   }
   watch(
-  () => timeIsUp.value,
-  () => {
-   
-    vitesse.value = getSpeed(wordCounter.value, currentSecound.value / 60);
-    console.log(vitesse.value);
-    const attempts = wordObject.value.map((el) => el.wrongPerWord);
-    const totalCaract = wordObject.value
-      .map((el) => el.mot.length)
-      .reduce((acc, el) => el + acc, 0);
-    totalWrong = attempts.reduce((acc, el) => el + acc, 0);
-    precision = getPrecision(totalCaract, totalWrong);
-    localStorage.clear();
-  }
-);
+    () => timeIsUp.value,
+    () => {
+      vitesse.value = getSpeed(wordCounter.value, currentSecound.value / 60);
+      console.log(vitesse.value);
+      const attempts = wordObject.value.map((el) => el.wrongPerWord);
+      const totalCaract = wordObject.value
+        .map((el) => el.mot.length)
+        .reduce((acc, el) => el + acc, 0);
+      totalWrong = attempts.reduce((acc, el) => el + acc, 0);
+      precision = getPrecision(totalCaract, totalWrong);
+      localStorage.clear();
+    }
+  );
 }
-
-
 
 watch(
   () => startTyping.value,
@@ -162,16 +163,21 @@ watch(
   }
 );
 
+// Car movement style
+const carStyle = computed(() => {
+  const distance = mooveCar.value * 5;
+  return `transform: translateX(${distance}px)`;
+});
 let totalWordLength = Object.keys(getWord(20)).length;
 </script>
 
 <template>
-  <div class="global">
-    <div class="loader" v-if="!start">
-      <SpinnerComponent />
-    </div>
-    <div class="contenu" v-else>
-      <div class="container" v-if="!timeIsUp">
+  <div class="loader" v-if="!start">
+    <SpinnerComponent />
+  </div>
+  <div class="container" v-else>
+    <div>
+      <div class="contenu" v-if="!timeIsUp">
         <div class="timer-container">
           <div class="timer" v-if="startTyping">
             <svg
@@ -180,38 +186,48 @@ let totalWordLength = Object.keys(getWord(20)).length;
               viewBox="0 -960 960 960"
               width="48px"
               fill="#df7132"
+              class="timer-icon"
             >
               <path
                 d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"
               />
             </svg>
-            {{ "0" + minutes }} : {{ secondes }}
+            <span class="timer-text">{{ "0" + minutes }} : {{ secondes }}</span>
           </div>
         </div>
-        <span
-          class="text"
-          v-for="(word, index) in wordObject"
-          :key="index"
-          :class="{
-            writeWord: word.isFinding === 'vrai',
-            wrongWord: word.isFinding === 'faux',
-            currentW: word.isCurrent,
-          }"
-        >
+        <div class="text-container">
           <span
-            class="letterSpan"
-            v-for="(letter, index1) in word.mot.split('')"
-            :key="index1"
+            class="text"
+            v-for="(word, index) in wordObject"
+            :key="index"
             :class="{
-              green: index === wordCounter && index1 === letterCounter,
+              writeWord: word.isFinding === 'vrai',
+              wrongWord: word.isFinding === 'faux',
+              currentW: word.isCurrent,
             }"
           >
-            {{ letter }}
+            <span
+              class="letterSpan"
+              v-for="(letter, index1) in word.mot.split('')"
+              :key="index1"
+              :class="{
+                green: index === wordCounter && index1 === letterCounter,
+              }"
+            >
+              {{ letter }}
+            </span>
           </span>
-        </span>
+        </div>
+        <div class="car-container">
+          <img
+            src="https://s.cdpn.io/13034/car.png"
+            class="car"
+            width="220"
+            :style="carStyle"
+          />
+        </div>
       </div>
-      <ResultComponent v-if="timeIsUp" :vitesseProps="vitesse" :precisionProps="precision" :duree="currentSecound"/>
-      <div class="restart">
+      <div class="restart" v-if="!timeIsUp">
         <a href="" @click.prevent="refreshPage">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -226,6 +242,12 @@ let totalWordLength = Object.keys(getWord(20)).length;
           </svg>
         </a>
       </div>
+      <ResultComponent
+        v-if="timeIsUp"
+        :vitesseProps="vitesse"
+        :precisionProps="precision"
+        :duree="currentSecound"
+      />
     </div>
   </div>
 </template>
@@ -245,9 +267,14 @@ let totalWordLength = Object.keys(getWord(20)).length;
   background-color: transparent;
   padding: 3rem;
   margin-bottom: 2rem;
-  overflow-x: hidden;
 }
-
+.text-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 10px;
+  line-height: 1rem;
+}
 .restart {
   margin-top: 10rem;
   text-align: center;
@@ -261,6 +288,9 @@ let totalWordLength = Object.keys(getWord(20)).length;
   line-height: 1.5;
   text-align: justify;
   opacity: 0.5;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding:0px;
 }
 
 .writeWord {
@@ -277,5 +307,28 @@ let totalWordLength = Object.keys(getWord(20)).length;
 
 .letterSpan {
   padding: 0 4px;
+}
+
+.car {
+  transition: transform 0.3s ease-in-out;
+}
+.car-container {
+  border-bottom: 2px solid green;
+}
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-text {
+  font-size: 2rem;
 }
 </style>
