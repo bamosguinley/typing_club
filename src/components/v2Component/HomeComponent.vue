@@ -1,200 +1,335 @@
 <script setup>
-import TimerComponent from "../v2Component/TimerComponent.vue";
-import { onMounted, reactive, ref } from "vue";
-import getWord from "@/composable/utils";
+import { ref, watch, onBeforeMount, onMounted, computed } from "vue";
+import SpinnerComponent from "../v2Component/SpinnerComponent.vue";
+import {
+  getObject,
+  getPrecision,
+  getSpeed,
+  getWord,
+  setObject,
+  typingSong,
+  wrongSong,
+  winnerSong,
+} from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
-
-const refreshPage = () => {
-  location.reload();
-};
-let words = getWord(50); //Mots récupérés de façon aléatoire
-let wordObject = ref([]); //Initialiser un tableau d'objet mot
+const preventKey = ["Shift", "CapsLock", "Dead"];
+const word = ref([]);
+const start = ref(false);
+const wordObject = ref([]);
+const typingCount = ref(0);
 const counting = ref(false);
 const wordCounter = ref(0);
 const letterCounter = ref(0);
-let userInput = ref("");
-let wrongCount= ref(0)
-const timeIsUp = ref(false); // Variable pour vérifier si le temps est écoulé
+const wrongCount = ref(0);
+const timeIsUp = ref(false);
+let vitesse = ref(0);
+let totalWrong = 0;
+let precision = 0;
+let mooveCar = ref(0);
+let endBeforeTime = ref(false);
+let startTyping = ref(false);
+const minutes = ref(3);
+let currentSecound = ref(0);
+const secondes = ref("00");
+let intervalId = null;
 
-/**
- * Ajouter chaque objet mot au tableau wordObject
- */
-words.forEach((el) => {
-  wordObject.value.push({ mot: el + " ", isFinding: "", isCurrent: false });
+onBeforeMount(() => {
+  word.value = getWord(20);
+  if (!localStorage.getItem(1)) {
+    setObject(1, word.value);
+  }
 });
 
-/**
- * Stocker localement les mots actuel
- * @param word
- */
-function storeRandomWord(word) {
-  let currentStorage = localStorage.setItem("randomWord", word);
-  let storedRandomWord = currentStorage.getItem("randomWord");
-  return storedRandomWord;
+onMounted(() => {
+  document.addEventListener("keydown", Input);
+  word.value = getObject(1);
+  word.value.forEach((el) => {
+    wordObject.value.push({
+      mot: el,
+      isFinding: "",
+      isCurrent: false,
+      wrongPerWord: 0,
+    });
+  });
+  setTimeout(() => {
+    start.value = true;
+  }, 2000);
+});
+
+function refreshPage() {
+  location.reload();
 }
 
-/**
- * Récupérer la frappe au clavier et qui gère le declenchement du timer
- * @param e
- */
 function Input(e) {
   if (!counting.value) {
     counting.value = true;
   }
-  // Vérifie si wordCounter est inférieur à la longueur totale des mots
+  if (e.code === "Space") {
+    e.preventDefault();
+  }
+  if (preventKey.includes(e.key)) {
+    return;
+  }
+  startTyping.value = true;
+  typingCount.value++;
   if (wordCounter.value < wordObject.value.length) {
-    // Récupère le mot actuel à tester
     let currentWord = wordObject.value[wordCounter.value].mot;
-    //Passer la propriété du mot courant a true pour appliquer une class
-        wordObject.value[wordCounter.value].isCurrent = true;
-    // Vérifie si letterCounter est inférieur à la longueur du mot actuel
+    wordObject.value[wordCounter.value].isCurrent = true;
+
     if (letterCounter.value < currentWord.length) {
-      // Récupère la lettre attendue dans le mot actuel
       let expectedLetter = currentWord.charAt(letterCounter.value);
-      // Compare la lettre entrée avec la lettre attendue
+
       if (e.key === expectedLetter) {
-        // Si la lettre est correcte, passe à la lettre suivante
         letterCounter.value++;
-        console.log(wrongCount.value);
-        // Vérifie si toutes les lettres du mot ont été vérifiées
+        mooveCar.value++;
+        typingSong();
         if (letterCounter.value === currentWord.length) {
-          //Vérifier si le nombre d'erreur par mot est 0
-          console.log(": "+wrongCount.value);
-          if (wrongCount.value===0) {
-             wordObject.value[wordCounter.value].isFinding = "vrai";
+          if (wrongCount.value === 0) {
+            wordObject.value[wordCounter.value].isFinding = "vrai";
           }
-          // Passe au mot suivant
           wordCounter.value++;
           wordObject.value[wordCounter.value].isCurrent = true;
-          letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
-          wrongCount.value = 0; 
+          letterCounter.value = 0;
+          wrongCount.value = 0;
         }
-      }
-      /**
-       * Retourner en arrière en cas d'erreur
-       */
-      else if (e.key === "Backspace" && letterCounter.value > 0 ) {
+      } else if (e.key === "Backspace" && letterCounter.value > 0) {
         wordObject.value[wordCounter.value].isFinding = "";
         letterCounter.value--;
         wrongCount.value--;
-          console.log(wrongCount.value);
-        console.log(letterCounter.value);
       } else {
         letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         wrongCount.value++;
+        wrongSong();
+        wordObject.value[wordCounter.value].wrongPerWord++;
+
         if (letterCounter.value === currentWord.length) {
-          //Vérifier si le nombre d'erreur par mot est 0
-          console.log(": "+wrongCount.value);
           wordCounter.value++;
           wordObject.value[wordCounter.value].isCurrent = true;
-          letterCounter.value = 0; // Réinitialiser le compteur des lettres pour le nouveau mot
-          wrongCount.value = 0; 
-        } 
-        
+          letterCounter.value = 0;
+          wrongCount.value = 0;
+        }
       }
     }
   }
 
-  // // Si wordCounter a atteint la fin des mots
-  // if (wordCounter.value === wordObject.value.length) {
-  //   console.log("Tous les mots ont été vérifiés.");
-  // }
-}
-//Ecouter la frappe dès le chargement de la page
-onMounted(() => {
-  document.addEventListener("keydown", Input);
-});
-</script>
-<template>
-  
-  <div class="container" v-if="timeIsUp===false">
-    <div>
-      <TimerComponent v-if="counting" @sendTimeOver="(el)=>timeIsUp=el" />
-    </div>
-    <span
-      class="text"
-      v-for="(word, index) in wordObject"
-      :key="index"
-      :class="{
-        writeWord: word.isFinding === 'vrai',
-        wrongWord: word.isFinding === 'faux',
-        currentW: word.isCurrent === true,
-      }"
-    >
-      <span
-        v-for="(letter, index1) in word.mot.split('')"
-        :key="index1"
-        :class="{
-          green: index === wordCounter && index1 === letterCounter,
-        }"
-      >
-        {{ letter }}
-      </span>
-    </span>
-  </div>
-  <ResultComponent v-if="timeIsUp===true" />
-  <div class="restart">
-    <a href="#" @click="storeRandomWord(wordObject)">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="60px"
-        viewBox="0 -960 960 960"
-        width="60px"
-        fill="#df7132"
-      >
-        <path
-          d="M440-122q-121-15-200.5-105.5T160-440q0-66 26-126.5T260-672l57 57q-38 34-57.5 79T240-440q0 88 56 155.5T440-202v80Zm80 0v-80q87-16 143.5-83T720-440q0-100-70-170t-170-70h-3l44 44-56 56-140-140 140-140 56 56-44 44h3q134 0 227 93t93 227q0 121-79.5 211.5T520-122Z"
-        />
-      </svg>
-    </a>
-  </div>
-</template>
-<style scoped>
-.green {
-  color: rgb(18, 19, 18);
-  background-color: #0f0f0f6c;
-  border-bottom: 1px solid;
+  if (wordCounter.value == totalWordLength) {
+    endBeforeTime.value = true;
+    timeIsUp.value = true;
+    clearInterval(intervalId);
+  }
+  watch(
+    () => timeIsUp.value,
+    () => {
+      vitesse.value = getSpeed(wordCounter.value, currentSecound.value / 60);
+      console.log(vitesse.value);
+      const attempts = wordObject.value.map((el) => el.wrongPerWord);
+      const totalCaract = wordObject.value
+        .map((el) => el.mot.length)
+        .reduce((acc, el) => el + acc, 0);
+      totalWrong = attempts.reduce((acc, el) => el + acc, 0);
+      precision = getPrecision(totalCaract, totalWrong);
+      if (precision >= 80) {
+        winnerSong();
+      }
+      localStorage.clear();
+    }
+  );
 }
 
-/* Style pour le contenu du texte */
+watch(
+  () => startTyping.value,
+  (newValue) => {
+    if (newValue) {
+      intervalId = setInterval(() => {
+        secondes.value--;
+
+        if (secondes.value == -1) {
+          secondes.value = 59;
+          minutes.value--;
+        }
+
+        if (secondes.value < 10) {
+          secondes.value = "0" + secondes.value;
+        }
+
+        if (minutes.value == 0 && secondes.value == 0) {
+          clearInterval(intervalId);
+          timeIsUp.value = true;
+        }
+        currentSecound.value++;
+        console.log(currentSecound.value);
+      }, 1000);
+    } else {
+      clearInterval(intervalId);
+      timeIsUp.value = true;
+    }
+  }
+);
+
+// Car movement style
+const carStyle = computed(() => {
+  const distance = mooveCar.value * 5;
+  return `transform: translateX(${distance}px)`;
+});
+let totalWordLength = Object.keys(getWord(20)).length;
+</script>
+
+<template>
+  <div class="loader" v-if="!start">
+    <SpinnerComponent />
+  </div>
+  <div class="container" v-else>
+    <div>
+      <div class="contenu" v-if="!timeIsUp">
+        <div class="timer-container">
+          <div class="timer" v-if="startTyping">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="48px"
+              viewBox="0 -960 960 960"
+              width="48px"
+              fill="#df7132"
+              class="timer-icon"
+            >
+              <path
+                d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"
+              />
+            </svg>
+            <span class="timer-text">{{ "0" + minutes }} : {{ secondes }}</span>
+          </div>
+        </div>
+        <div class="text-container">
+          <span
+            class="text"
+            v-for="(word, index) in wordObject"
+            :key="index"
+            :class="{
+              writeWord: word.isFinding === 'vrai',
+              wrongWord: word.isFinding === 'faux',
+              currentW: word.isCurrent,
+            }"
+          >
+            <span
+              class="letterSpan"
+              v-for="(letter, index1) in word.mot.split('')"
+              :key="index1"
+              :class="{
+                green: index === wordCounter && index1 === letterCounter,
+              }"
+            >
+              {{ letter }}
+            </span>
+          </span>
+        </div>
+        <div class="car-container">
+          <img
+            src="https://s.cdpn.io/13034/car.png"
+            class="car"
+            width="220"
+            :style="carStyle"
+          />
+        </div>
+      </div>
+      <div class="restart" v-if="!timeIsUp">
+        <a href="" @click.prevent="refreshPage">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="60px"
+            viewBox="0 -960 960 960"
+            width="60px"
+            fill="#df7132"
+          >
+            <path
+              d="M440-122q-121-15-200.5-105.5T160-440q0-66 26-126.5T260-672l57 57q-38 34-57.5 79T240-440q0 88 56 155.5T440-202v80Zm80 0v-80q87-16 143.5-83T720-440q0-100-70-170t-170-70h-3l44 44-56 56-140-140 140-140 56 56-44 44h3q134 0 227 93t93 227q0 121-79.5 211.5T520-122Z"
+            />
+          </svg>
+        </a>
+      </div>
+      <ResultComponent
+        v-if="timeIsUp"
+        :vitesseProps="vitesse"
+        :precisionProps="precision"
+        :duree="currentSecound"
+      />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.green {
+  color: rgb(90, 92, 90);
+  background-color: #5b5e5b6c;
+  border-bottom: 1px solid;
+}
 .container {
   max-width: 1000px;
   width: 100%;
-  height: 300px;
+  height: auto;
   margin: 2rem auto;
-  background-color: transparent;
-  padding: 2rem;
+  padding: 3rem;
   margin-bottom: 2rem;
-  /* overflow:hidden; */
+}
+.text-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 10px;
 }
 .restart {
   margin-top: 10rem;
   text-align: center;
   color: rgb(223, 113, 50);
+  position: relative;
 }
-.timer {
-  font-size: 3rem;
-  color: #df7132;
-}
-/* style pour le text  */
 .text {
   font-size: 2rem;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   line-height: 1.5;
   text-align: justify;
   opacity: 0.5;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding:0px;
 }
+
 .writeWord {
   color: green;
 }
+
 .currentW {
   background-color: #4947473a;
 }
+
 .wrongWord {
   color: #e20606;
 }
 
-</style>
+.letterSpan {
+  padding: 0 4px;
+}
 
+.car {
+  transition: transform 0.3s ease-in-out;
+}
+.car-container {
+  border-bottom: 2px solid green;
+}
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-text {
+  font-size: 2rem;
+}
+</style>

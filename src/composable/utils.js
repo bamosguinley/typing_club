@@ -1,18 +1,19 @@
 import data from "./data";
 import { ref } from "vue";
-let data2 = ref([]);
-let data3 = ref([]);
-let dataAleatoire = ref([]);
 
-let count = ref(0);
-const refusedChar = ["œ", "Æ"];
+export const getWord = (nombreMot) => {
 
-// Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
-data.forEach((element) => {
-  data2.value = data2.value.concat(element.split(/\s/));
-});
+  let data2 = ref([]);
+  let data3 = ref([]);
+  let dataAleatoire = ref([]);
+  let count = ref(0);
+  const refusedChar = ["œ", "Æ"];
 
-const getWord = (nombreMot) => {
+  // Ajoute les mots de chaque élément à data2.value au lieu de le réinitialiser
+  data.forEach((element) => {
+    data2.value = data2.value.concat(element.split(/\s/));
+  });
+
   // Génére une position aléatoire dans le tableau data2.value
   let position = Math.floor(
     Math.random() * (data2.value.length - nombreMot + 1)
@@ -38,11 +39,8 @@ const getWord = (nombreMot) => {
     }
   });
   return data3.value; // Retourner data3.value en tant que tableau
-};
+}
 
-// export default getWord;
-
-// export default getWord;
 
 // Fonction pour un décompteur de 3 minutes
 export const chrono = function countdown() {
@@ -56,9 +54,7 @@ export const chrono = function countdown() {
     // Formatage en mm:ss
     const formattedMinutes = (minutes < 10 ? "0" : "") + minutes;
     const formattedSeconds = (seconds < 10 ? "0" : "") + seconds;
-
     formattedTime = `${formattedMinutes}:${formattedSeconds}`;
-
     if (totalSeconds <= 0) {
       clearInterval(intervalId); // Arrête le décompteur une fois le temps écoulé
     } else {
@@ -69,15 +65,74 @@ export const chrono = function countdown() {
   return formattedTime;
 };
 
-export default getWord;
+
 
 /*
  *Stocker les données
  */
-export function storeRandomWord(word) {
-  localStorage.setItem("randomWord", word);
-  window.addEventListener("load", () => {
-    const storedRandomWord = localStorage.getItem("randomWord");
-    return storedRandomWord;
-  });
+// Fonction pour définir un objet dans le stockage local
+export function setObject(key, obj) {
+  localStorage.setItem(key, JSON.stringify(obj));
+}
+
+// Fonction pour récupérer un objet depuis le stockage local
+export function getObject(key) {
+  const storedObj = localStorage.getItem(key);
+  return storedObj ? JSON.parse(storedObj) : null;
+}
+
+
+
+/**
+ * fonction de calcul de précision
+ */
+
+export const getTotalAttempts = (wordObject) => {
+  attemps=wordObject.map(el=>el.w)
+  let totalAttempts = wordObject.value.reduce(
+    (acc, el) => acc + el.attemps, // fait la somme de tous les tentatives de chaque objet (mot)
+    0
+  );
+  return totalAttempts;
+};
+export const getPrecision = (totalAttempts, wordsLenght) => {
+  let precision = ((totalAttempts-wordsLenght)/totalAttempts) * 100; // fait le nombre de mots réussis * 100 , puis divise le resultat par le nombre total de mots
+  if (precision <= 0) {
+    // la précision ne doit pas être en dessous de 0
+    precision = 0;
+  }
+  return Math.floor(precision); // retour de la précision
+};
+
+/**
+ * fonction de calcul de la vitesse
+ */
+export const getSpeed = (totalTipyng,time) => {
+  const speed =Math.floor(totalTipyng/time); // calcul de la vitesse
+  return speed; // retour de la valeur de la vitesse
+};
+
+/**
+ * Function for playing song 
+ */
+import typingSongAudio from '../assets/audio/typing.wav';
+export function typingSong() {
+  const audio = new Audio(typingSongAudio);
+  audio.play();
+}
+/**
+ * Function for wrong typing song 
+ */
+import wrongSongAudio from '../assets/audio/wrongTouch.wav';
+export function wrongSong() {
+  const audio = new Audio(wrongSongAudio);
+  audio.play();
+}
+/**
+ * Function for winner song 
+ */
+import winnerSongAudio from '../assets/audio/reussi.wav';
+export function winnerSong() {
+  const audio = new Audio(winnerSongAudio);
+  audio.play();
 }
