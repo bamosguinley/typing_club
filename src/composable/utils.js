@@ -112,3 +112,27 @@ export const getSpeed = (totalTipyng,time) => {
   return speed; // retour de la valeur de la vitesse
 };
 
+/**
+ * Function for playing song 
+ */
+import typingSongAudio from '../assets/audio/typing.wav';
+export function typingSong() {
+  const audio = new Audio(typingSongAudio);
+  audio.play();
+}
+/**
+ * Function for wrong typing song 
+ */
+import wrongSongAudio from '../assets/audio/wrongTouch.wav';
+export function wrongSong() {
+  const audio = new Audio(wrongSongAudio);
+  audio.play();
+}
+/**
+ * Function for winner song 
+ */
+import winnerSongAudio from '../assets/audio/reussi.wav';
+export function winnerSong() {
+  const audio = new Audio(winnerSongAudio);
+  audio.play();
+}
