@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive } from 'vue';
 // Icons
 import IconCar from '@/components/icons/IconCar.vue'
+import GifCar from '@/components/icons/GifCar.vue'
 
 const props = defineProps(['far', 'countLetters'])
 const emit = defineEmits(["emitStep"])
@@ -13,7 +14,8 @@ const step = ref(0)
 // defineExpose({ step: step.value })
 
 onMounted(() => {
-  step.value = (roadRef.value.clientWidth - 50)/ props.countLetters
+  step.value = (roadRef.value.clientWidth - 128)/ props.countLetters
+  console.log("car width", carRef.value.clientWidth);
   emit("emitStep", step.value)
 })
 
@@ -21,7 +23,7 @@ onMounted(() => {
 
 <template>
   <div class="road" ref="roadRef">
-    <IconCar ref="carRef" class="car" :style="{ marginLeft: `${props.far}px` }" />
+    <GifCar ref="carRef" class="car" :style="{ marginLeft: `${props.far}px` }" />
   </div>
 </template>
 
