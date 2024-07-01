@@ -15,7 +15,6 @@ const step = ref(0)
 
 onMounted(() => {
   step.value = (roadRef.value.clientWidth - 128)/ props.countLetters
-  console.log("car width", carRef.value.clientWidth);
   emit("emitStep", step.value)
 })
 
