@@ -47,21 +47,27 @@ const props = defineProps({
 }
 
 @keyframes tiper {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(-100);
-  }
 
-  40% {
-    transform: translateY(-30px);
-  }
+0%,
+20%,
+50%,
+80%,
+100% {
+  transform: translateY(-100);
+}
 
-  60% {
-    transform: translateY(0px);
-  }
+40% {
+  transform: translateY(-50px);
+}
+
+60% {
+  transform: translateY(0px);
+}
+
+
+15% {
+  transform: translateY(70px);
+}
 }
 
 .result-container h4 {
