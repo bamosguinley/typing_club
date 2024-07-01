@@ -12,7 +12,7 @@
       <h1>RESULTATS</h1>
     </div>
     <div class="nbr-mot">
-      <h2>Nombre de mot</h2>
+      <h2>Nombre de mots</h2>
       (par minutes)
     </div>
     <div class="flex">
