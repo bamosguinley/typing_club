@@ -39,7 +39,7 @@ let timerIntervalId = null;
 
 // variables statistisues
 let countWords = ref(0);
-let countletters = 0;
+let countLetters = ref(0);
 let countAttempts = 0;
 
 // touches insensibles
@@ -71,7 +71,7 @@ const resultData = ref({
 
 // car position
 const far = ref(0);
-const step = ref()
+const step = ref(0);
 
 //drive ref
 const driveRef = ref(null)
@@ -123,9 +123,9 @@ async function getWorlds() {
       // mémoriser le nombre de mot
       countWords.value = wordsArray.value.length;
       wordsArray.value.forEach((word) => {
-        countletters += word.letters.length;
+        countLetters.value += word.letters.length;
       });
-      console.log("countletters", countletters);
+      // console.log("countLetters.value", countLetters.value);
     })
     .catch((e) => {
       // s'il n'y a pas la connection
@@ -173,8 +173,8 @@ async function getWorlds() {
       countWords.value = wordsArray.value.length;
       // compter le nombre de lettres
       wordsArray.value.forEach((word) => {
-        countletters += word.letters.length;
-        console.log("countletters", countletters);
+        countLetters.value += word.letters.length;
+        console.log("countLetters.value", countLetters.value);
       });
     });
 }
@@ -221,7 +221,6 @@ function startBlockingTyping(e) {
 
       if (count < wordsArray.value[wordCount].letters.length - 1) {
         // si on est pas sur la dernière lettre d'un mot
-        far.value += 5;
         count++;
       } else {
         // si on est sur la dernière lettre d'un mot
@@ -269,6 +268,7 @@ function startNoBlockingTyping(e) {
       } else {
         wordsArray.value[wordCount].letters[--count].isRight = "";
       }
+      far.value -= step.value;
     }
   } else {
     // condition de non prises en comptes des touches insensibles
@@ -291,7 +291,6 @@ function startNoBlockingTyping(e) {
       }
       // si on est pas sur la dernière lettre d'un mot
       if (count < wordsArray.value[wordCount].letters.length - 1) {
-        far.value += 5;
         count++;
       } else {
         wordCount++; // passer le compteur au mot suivant
@@ -299,6 +298,7 @@ function startNoBlockingTyping(e) {
         if (wordCount < wordsArray.value.length - 1)
           wordsArray.value[wordCount].focus = true;
       }
+      far.value += step.value;
 
       console.log("wordCount dans levent", wordCount);
       console.log("count dans l'event", count);
@@ -383,18 +383,18 @@ function getPrecision() {
       attempts.push(l.tentative);
     });
     // compter le nombre de lettres
-    countletters += word.letters.length;
+    countLetters.value += word.letters.length;
   });
   // compter les tentatives
   countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
-  console.log("countletters", countletters);
+  console.log("countLetters.value", countLetters.value);
   console.log("countAttempts", countAttempts);
   console.log(
     "Precision",
-    ((countletters - countAttempts) / countletters) * 100
+    ((countLetters.value - countAttempts) / countLetters.value) * 100
   );
-  if (Math.floor(((countletters - countAttempts) / countletters) * 100) > 0) {
-    return Math.floor(((countletters - countAttempts) / countletters) * 100);
+  if (Math.floor(((countLetters.value - countAttempts) / countLetters.value) * 100) > 0) {
+    return Math.floor(((countLetters.value - countAttempts) / countLetters.value) * 100);
   }
   return 0;
 }
@@ -463,7 +463,7 @@ onMounted(() => {
         </p>
         <div class="container">
           <div class="text-container" ref="textContainersRef">
-            <!-- <DriverComponent :far="far" ref="driveRef", :countLetters="countLetters" /> -->
+            <DriverComponent :far="far" ref="driveRef" :countLetters="countLetters" @emitStep="(data) => step = data" />
           </div>
           <div class="text-container" ref="textContainersRef">
             <p v-for="(word, index) in wordsArray" :key="index" :class="{ wordFocus: word.focus }">

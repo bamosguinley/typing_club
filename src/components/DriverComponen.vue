@@ -3,19 +3,25 @@ import { ref, onMounted, reactive } from 'vue';
 // Icons
 import IconCar from '@/components/icons/IconCar.vue'
 
-const props = defineProps(['far', 'countletters'])
+const props = defineProps(['far', 'countLetters'])
+const emit = defineEmits(["emitStep"])
 
 const roadRef = ref(null)
 const carRef = ref(null)
+const step = ref(0)
 
-const road = reactive({
-  width: null,
-  step: props.countletters
-})
+// defineExpose({ step: step.value })
 
-defineExpose({ roadWidth: road.width })
 onMounted(() => {
-  console.log("road", road);
+  // console.log("roadRef", roadRef.value.clientWidth);
+  // console.log("far", props.far);
+  // console.log("countLetters", props.countLetters);
+  step.value = (roadRef.value.clientWidth - 50)/ props.countLetters
+  console.log("clientWidth", roadRef.value.clientWidth);
+  console.log("step", step.value);
+  console.log("countLetters", props.countLetters);
+  console.log("countLetters * step", props.countLetters * step.value) ;
+  emit("emitStep", step.value)
 })
 
 </script>
