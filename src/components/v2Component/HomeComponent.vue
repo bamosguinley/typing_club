@@ -8,6 +8,8 @@ import {
   getWord,
   setObject,
   typingSong,
+  wrongSong,
+  winnerSong,
 } from "@/composable/utils";
 import ResultComponent from "./ResultComponent.vue";
 
@@ -60,7 +62,6 @@ function refreshPage() {
 }
 
 function Input(e) {
-  typingSong();
   if (!counting.value) {
     counting.value = true;
   }
@@ -82,6 +83,7 @@ function Input(e) {
       if (e.key === expectedLetter) {
         letterCounter.value++;
         mooveCar.value++;
+        typingSong();
         if (letterCounter.value === currentWord.length) {
           if (wrongCount.value === 0) {
             wordObject.value[wordCounter.value].isFinding = "vrai";
@@ -99,7 +101,7 @@ function Input(e) {
         letterCounter.value++;
         wordObject.value[wordCounter.value].isFinding = "faux";
         wrongCount.value++;
-
+        wrongSong();
         wordObject.value[wordCounter.value].wrongPerWord++;
 
         if (letterCounter.value === currentWord.length) {
@@ -112,7 +114,7 @@ function Input(e) {
     }
   }
 
-  if (wordCounter.value == totalWordLength - 1) {
+  if (wordCounter.value == totalWordLength) {
     endBeforeTime.value = true;
     timeIsUp.value = true;
     clearInterval(intervalId);
@@ -128,6 +130,9 @@ function Input(e) {
         .reduce((acc, el) => el + acc, 0);
       totalWrong = attempts.reduce((acc, el) => el + acc, 0);
       precision = getPrecision(totalCaract, totalWrong);
+      if (precision >= 80) {
+        winnerSong();
+      }
       localStorage.clear();
     }
   );
