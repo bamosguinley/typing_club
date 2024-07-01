@@ -35,7 +35,7 @@ const wordsArray = ref([]);
 const minutes = ref(0);
 const seconds = ref(0);
 const maxcountDownMinutes = 1; // nombre de muinutes à partir duquel le countDown débute
-let timerIntervalId = null;
+let timerIntervalId;
 
 // variables statistisues
 let countWords = ref(0);
@@ -340,19 +340,21 @@ function timer() {
 
 /** Lance un Compte à Rebours */
 function countDown() {
-  const isTimeOut = seconds.value === 0 && minutes.value === 0;
   timerIntervalId = setInterval(() => {
+    if (seconds.value > 0) {
+      seconds.value--;
+    } else if (seconds.value === 0) {
+      if (minutes.value > 0) {
+        minutes.value--;
+        seconds.value = 59;
+      }
+    }
+    const isTimeOut = seconds.value === 0 && minutes.value === 0;
     if (isTimeOut) {
       stopTimer();
       stopGame();
-    } else {
-      if (seconds.value > 0) {
-        seconds.value--;
-      } else if (seconds.value === 0) {
-        minutes.value--;
-        seconds.value = 60;
-      }
     }
+
   }, 1000);
 }
 
