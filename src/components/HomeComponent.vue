@@ -225,6 +225,7 @@ function startBlockingTyping(e) {
         wordCount++; // passer le compteur au mot suivant
         count = 0; // réinitialiser le compteur de lettres
       }
+      far.value -= step.value;
     } else {
       wordsArray.value[wordCount].letters[count].isRight = "failed";
       wordsArray.value[wordCount].letters[count].tentative++;
