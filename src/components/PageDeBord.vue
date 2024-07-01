@@ -7,7 +7,6 @@
         <!-- <option value="Oui">Oui</option>
         <option value="Non">Non</option> -->
         <option id="option" v-for="option in options" :key="option.id">{{ option.value }}</option>
-        
       </select>
       <span>{{ selected }}</span>
     </div>
@@ -61,7 +60,6 @@ function Display() {
   return console.log(selected);
 }
 const options = [{ value: "Oui" }, { value: "Non" }];
-
 // const emit = defineEmits(['array']);
 // emit ('array', options)
 // const button = document.querySelector("start");
