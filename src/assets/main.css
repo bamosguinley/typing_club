@@ -2,15 +2,37 @@
 
 body {
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
-  font-family:'Times New Roman', Times, serif;
-  background-color:#f6dec8;
+  font-family: "Times New Roman", Times, serif;
+  background-color: #f6dec8;
   margin: 0;
 }
+
 @font-face {
   font-family: "Playwrite";
-  src: url("@/assets/fonts/Playwrite_NG_Modern/PlaywriteNGModern-VariableFont_wght.ttf") format("trueType");
+  src: url("@/assets/fonts/Playwrite_NG_Modern/PlaywriteNGModern-VariableFont_wght.ttf")
+    format("trueType");
   font-weight: bold;
   font-style: normal;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(-100);
   }
-  
-  
+
+  40% {
+    transform: translateY(-50px);
+  }
+
+  60% {
+    transform: translateY(0px);
+  }
+
+  15% {
+    transform: translateY(70px);
+  }
+}

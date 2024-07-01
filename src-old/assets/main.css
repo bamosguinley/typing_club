@@ -1,0 +1,16 @@
+@import url("./base.css");
+
+body {
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+  font-family:'Times New Roman', Times, serif;
+  background-color:#f6dec8;
+  margin: 0;
+}
+@font-face {
+  font-family: "Playwrite";
+  src: url("@/assets/fonts/Playwrite_NG_Modern/PlaywriteNGModern-VariableFont_wght.ttf") format("trueType");
+  font-weight: bold;
+  font-style: normal;
+  }
+  
+  

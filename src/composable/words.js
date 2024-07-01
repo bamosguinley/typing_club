@@ -1,0 +1,2 @@
+const words =
+  "Si l'aplomb imperturbable, l'audace léonine, l'effronterie proverbiale de Wangrin s'exercèrent au détriment des commerçants européens et libano-syriens, des chefs de canton et des puissants du jour, son plus grand exploit fut certainement la manière avec laquelle il osa rouler les dieux de la brousse, Messieurs - les - administrateurs - coloniaux, qu'il rencontra sur son chemin. En effet, à l'époque, mieux valait avoir sur le dos le mont Sinaï lui même que le moindre administrateur colonial.";

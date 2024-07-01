@@ -26,7 +26,7 @@ const props = defineProps({
   border-radius: 60%;
   box-shadow: 5px 5px 12px gray;
   background-color: #fff;
-  animation: bounce 1s ease-in-out forwards;
+  animation: tiper 1s ease-in-out forwards;
   animation-iteration-count: 1;
 }
 .btn-container{
@@ -43,6 +43,30 @@ const props = defineProps({
   color: #fff;
   font-size: 1rem;
   text-decoration: none;
+}
+
+@keyframes tiper {
+
+0%,
+20%,
+50%,
+80%,
+100% {
+  transform: translateY(-100);
+}
+
+40% {
+  transform: translateY(-50px);
+}
+
+60% {
+  transform: translateY(0px);
+}
+
+
+15% {
+  transform: translateY(70px);
+}
 }
 
 .result-container h4 {

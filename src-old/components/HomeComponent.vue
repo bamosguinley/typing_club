@@ -1,17 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
-
-// icons
 import IconeTime from "./icons/IconeTime.vue";
-import IconRestar from "./icons/IconRestar.vue";
-
-// components
 import ResultComponent from "./ResultComponent.vue";
-import SettingComponent from "@/components/SettingsComponent.vue";
-import DriverComponent from "@/components/DriverComponen.vue";
-
-// utils
-import { formatTime } from "@/composable/utils2";
 
 // game params
 const gameTypes = {
@@ -20,22 +10,19 @@ const gameTypes = {
 };
 const currentGameType = ref("noBlogkingGame");
 const timerTypes = {
-  timeCounter: "timeCounter",
-  countDown: "countDown",
+  free: "free",
+  chrono: "chrono",
 };
-const currentTimerType = ref("timeCounter");
+const currentTimerType = ref("free")
 
-// nombre de mots API
-const numberOfWordsToFetch = 30;
 
 // tableau de mots
 const wordsArray = ref([]);
 
 // décompteurs de temps
+const fixedMaxChrono = 1; // nombre de muinutes à partir duquel le chrono débute
 const minutes = ref(0);
 const seconds = ref(0);
-const maxcountDownMinutes = 1; // nombre de muinutes à partir duquel le countDown débute
-let timerIntervalId = null;
 
 // variables statistisues
 let countWords = ref(0);
@@ -44,14 +31,7 @@ let countAttempts = 0;
 
 // touches insensibles
 const keysToSkip1 = ["Shift", "CapsLock", "Dead", "Control", "Alt"];
-const keysToSkip2 = [
-  "Shift",
-  "CapsLock",
-  "Dead",
-  "Control",
-  "Alt",
-  "Backspace",
-];
+const keysToSkip2 = ["Shift", "CapsLock", "Dead", "Control", "Alt", "Backspace"];
 
 // position de la lettre courante
 let count = 0;
@@ -69,17 +49,10 @@ const resultData = ref({
   time: 0,
 });
 
-// car position
-const far = ref(0);
-const step = ref()
-
-//drive ref
-const driveRef = ref(null)
-
 /* FONCTIONS */
 /** Fonction permettant d'obtenir les mots à travvers un API */
 async function getWorlds() {
-  fetch(`https://trouve-mot.fr/api/random/${numberOfWordsToFetch}`)
+  fetch("https://trouve-mot.fr/api/random/10")
     .then((response) => response.json())
     .then((data) => {
       // retourne les mots sous forme d'objets dans le tableau wordsArray
@@ -98,7 +71,6 @@ async function getWorlds() {
               isRight: "",
               tentative: 0,
               type: "word",
-              focus: false,
             },
             {
               value: " ",
@@ -106,7 +78,6 @@ async function getWorlds() {
               isRight: "",
               tentative: 0,
               type: "space",
-              focus: false,
             }
           );
         } else {
@@ -116,81 +87,28 @@ async function getWorlds() {
             isRight: "",
             tentative: 0,
             type: "word",
-            focus: false,
           });
         }
       });
       // mémoriser le nombre de mot
       countWords.value = wordsArray.value.length;
-      wordsArray.value.forEach((word) => {
-        countletters += word.letters.length;
-      });
-      console.log("countletters", countletters);
-    })
-    .catch((e) => {
-      // s'il n'y a pas la connection
-      const sentence =
-        "grand exploit fut certainement la manière avec laquelle il osa";
-      const data = sentence.split(" ");
-      data.forEach((word, index) => {
-        const letters = [];
-
-        word.split("").forEach((letter) => {
-          letters.push({ char: letter, isRight: "", tentative: 0 });
-        });
-
-        if (index !== data.length - 1) {
-          wordsArray.value.push(
-            {
-              value: word,
-              letters,
-              isRight: "",
-              tentative: 0,
-              type: "word",
-              focus: false,
-            },
-            {
-              value: " ",
-              letters: [{ char: " ", isRight: "", tentative: 0 }],
-              isRight: "",
-              tentative: 0,
-              type: "space",
-              focus: false,
-            }
-          );
-        } else {
-          wordsArray.value.push({
-            value: word.name,
-            letters,
-            isRight: "",
-            tentative: 0,
-            type: "word",
-            focus: false,
-          });
-        }
-      });
-      // mémoriser le nombre de mot
-      countWords.value = wordsArray.value.length;
-      // compter le nombre de lettres
-      wordsArray.value.forEach((word) => {
-        countletters += word.letters.length;
-        console.log("countletters", countletters);
-      });
     });
 }
 
-/** défini les réglagles de la partie */
-function gameSetting(setting) {
-  currentGameType.value = setting.gameType;
-  currentTimerType.value = setting.timerType;
-  startGame();
+function setGameType(b) {
+  currentGameType.value =
+    b === "blocking" ? gameTypes.blocking : gameTypes.noBlocking;
+}
+
+function setTimerType(c) {
+  currentTimerType.value =
+    c === "chrono" ? timerTypes.chrono : timerTypes.free;
 }
 
 /** règle le nombre de minute, suspend le défilement provoqué par "espace" puis lance le jeux */
 function startGame() {
-  minutes.value =
-    currentTimerType.value === timerTypes.countDown ? maxcountDownMinutes : 0;
-  isGameParamsComponentVisible.value = false;
+  minutes.value = currentTimerType.value === timerTypes.chrono ? fixedMaxChrono : 0
+  isGameParamsComponentVisible.value = false
   window.addEventListener("keydown", stopSpaceKeyScrolling);
   if (currentGameType.value === "blockingGame") {
     document.addEventListener("keydown", startBlockingTyping);
@@ -199,12 +117,15 @@ function startGame() {
   }
 }
 
-/**
- * Démarre un jeux bloqusant.
- * Ne passe pas à la lettre suivante après une frappe incorrecte.
- * N'autorise pas la suppression
- * @param {keyboardEvent} e
- * */
+/** Formate le temps effectué en un format mm:ss */
+function formatTime(t) {
+  if (t < 10) {
+    return `0${Math.floor(t)}`;
+  }
+  return Math.floor(t);
+}
+
+/** initie un jeux bloqusant */
 function startBlockingTyping(e) {
   if (!keysToSkip2.includes(e.key)) {
     // Détecter la toute première frappe
@@ -219,36 +140,30 @@ function startBlockingTyping(e) {
         : (wordsArray.value[wordCount].letters[count].isRight =
           "successAfterOneAttempt");
 
-      if (count < wordsArray.value[wordCount].letters.length - 1) {
-        // si on est pas sur la dernière lettre d'un mot
-        far.value += 5;
+      if (count < wordsArray.value[wordCount].letters.length - 1) { // si on est pas sur la dernière lettre d'un mot
         count++;
-      } else {
-        // si on est sur la dernière lettre d'un mot
+      } else {  // si on est sur la dernière lettre d'un mot
         wordCount++; // passer le compteur au mot suivant
-        count = 0; // réinitialiser le compteur de lettres
+        count = 0;  // réinitialiser le compteur de lettres
       }
     } else {
       wordsArray.value[wordCount].letters[count].isRight = "failed";
       wordsArray.value[wordCount].letters[count].tentative++;
     }
+
   }
 
-  const isTooLastLetter =
-    wordCount > wordsArray.value.length - 1 && count === 0;
-  // si le type de decompte est countDown et qu'il s'est arrêté ou si on est sur la toute dernière lettre
-  if (isTooLastLetter) {
-    stopTimer();
+
+  const isChronoEnd = (currentTimerType.value === timerTypes.chrono) && (minutes.value === 0 && seconds.value === 0)
+  const isTooLastLetter = wordCount === wordsArray.value.length - 1 && count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1
+  if (isChronoEnd || isTooLastLetter) {
     stopGame();
+    return;
   }
 }
 
-/**
- * Démarre un jeux non bloqusant.
- * Ne passe pas à la lettre suivante après une frappe incorrecte.
- * Autorise la suppression
- * @param {keyboardEvent} e
- * */
+
+/** initie un jeux non bloquant */
 function startNoBlockingTyping(e) {
   // si on appuie sur la touche de suppression
   if (e.key === "Backspace") {
@@ -263,7 +178,7 @@ function startNoBlockingTyping(e) {
     } else if (wordCount > 0) {
       if (count === 0) {
         // à la première lettre d'un mot supérieur ou égal au deuxième, à la suppression on retourne sur le mot précédent
-        --wordCount;
+        --wordCount
         count = wordsArray.value[wordCount].letters.length - 1;
         wordsArray.value[wordCount].letters[count].isRight = "";
       } else {
@@ -278,7 +193,6 @@ function startNoBlockingTyping(e) {
         startCounter.value++;
       }
 
-      // si la bonne lettre est frappée
       if (wordsArray.value[wordCount].letters[count].char === e.key) {
         wordsArray.value[wordCount].letters[count].tentative > 0
           ? (wordsArray.value[wordCount].letters[count].isRight =
@@ -289,33 +203,22 @@ function startNoBlockingTyping(e) {
         wordsArray.value[wordCount].letters[count].isRight = "failed";
         wordsArray.value[wordCount].letters[count].tentative++;
       }
-      // si on est pas sur la dernière lettre d'un mot
-      if (count < wordsArray.value[wordCount].letters.length - 1) {
-        far.value += 5;
-        count++;
-      } else {
-        wordCount++; // passer le compteur au mot suivant
-        count = 0; // réinitialiser le compteur de lettres
-        if (wordCount < wordsArray.value.length - 1)
-          wordsArray.value[wordCount].focus = true;
-      }
 
-      console.log("wordCount dans levent", wordCount);
-      console.log("count dans l'event", count);
+      if (count < wordsArray.value[wordCount].letters.length - 1) { // si on est pas sur la dernière lettre d'un mot
+        count++;
+      } else {  // si on est sur la dernière lettre d'un mot
+        wordCount++; // passer le compteur au mot suivant
+        count = 0;  // réinitialiser le compteur de lettres
+      }
     }
   }
 
-  const isTooLastLetter =
-    wordCount > wordsArray.value.length - 1 && count === 0;
-  // si le type de decompte est countDown et qu'il s'est arrêté ou si on est sur la toute dernière lettre
-  if (isTooLastLetter) {
-    stopTimer();
+  const isChronoEnd = (currentTimerType.value === timerTypes.chrono) && (minutes.value === 0 && seconds.value === 0)
+  const isTooLastLetter = (wordCount === wordsArray.value.length - 1) && (count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1)
+  // si le type de decompte est chrono et qu'il s'est arrêté ou si on est sur la toute dernière lettre
+  if (isChronoEnd || isTooLastLetter) {
     stopGame();
   }
-}
-
-function stopTimer() {
-  clearInterval(timerIntervalId);
 }
 
 function stopGame() {
@@ -330,46 +233,45 @@ function stopGame() {
   displayResult();
 }
 
-/** Compte le temps en minutes et en secondes */
+/** compte le temps en minutes et en secondes */
 function timer() {
-  timerIntervalId = setInterval(() => {
+  const intervalId = setInterval(() => {
     if (seconds.value === 60) {
       minutes.value++;
       seconds.value = 0;
     } else if (seconds.value < 60) {
       seconds.value++;
     }
+    if (count === wordsArray.value[wordsArray.value.length - 1].letters.length - 1) clearInterval(intervalId);
   }, 1000);
 }
 
-/** Lance un Compte à Rebours */
-function countDown() {
-  const isTimeOut = seconds.value === 0 && minutes.value === 0;
-  timerIntervalId = setInterval(() => {
-    if (isTimeOut) {
-      stopTimer();
-      stopGame();
+/**  */
+function chrono() {
+  const intervalId = setInterval(() => {
+    if (seconds.value === 0 && minutes.value === 0) {
+      clearInterval(intervalId)
     } else {
       if (seconds.value > 0) {
         seconds.value--;
       } else if (seconds.value === 0) {
         minutes.value--;
-        seconds.value = 60;
+        seconds.value = 59;
       }
     }
   }, 1000);
 }
 
-/** Renvoie le nombre de mots tapés */
-function countTypedWords() {
-  if (currentTimerType.value === timerTypes.countDown) {
+/** compte le nombre de mots tapés */
+function getOfTypedWordsNumber() {
+  if (currentTimerType.value === timerTypes.chrono) {
     const nwords = wordCount + 1;
-    console.log("nombre de mots tapés", nwords);
-    return (nwords + 1) / 2;
-  } else {
-    const nwords = (countWords.value + 1) / 2;
-    console.log("nombre de mots tapés", nwords);
+    console.log("chrono wordCount", wordCount);
+    if (nwords > 0) return (nwords + 3) / 2
     return nwords;
+  } else {
+    console.log("timer wordCount", countWords.value - (countWords.value - 1));
+    return countWords.value - (countWords.value - 1)
   }
 }
 
@@ -384,15 +286,14 @@ function getPrecision() {
     });
     // compter le nombre de lettres
     countletters += word.letters.length;
+
   });
   // compter les tentatives
   countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
+
   console.log("countletters", countletters);
   console.log("countAttempts", countAttempts);
-  console.log(
-    "Precision",
-    ((countletters - countAttempts) / countletters) * 100
-  );
+  console.log("Precision", ((countletters - countAttempts) / countletters) * 100);
   if (Math.floor(((countletters - countAttempts) / countletters) * 100) > 0) {
     return Math.floor(((countletters - countAttempts) / countletters) * 100);
   }
@@ -401,23 +302,22 @@ function getPrecision() {
 
 /** calcule la vitesse */
 function getSpeed() {
-  const isCountDown = currentTimerType.value === timerTypes.countDown;
-  if (isCountDown) {
-    const countMinutes = minutes.value + seconds.value / 60;
-    const secs = (maxcountDownMinutes - countMinutes) * 60;
-    const speed = Math.floor(
-      countTypedWords() / (maxcountDownMinutes - countMinutes)
-    );
+  if (currentTimerType.value === timerTypes.chrono) {
+
+    const countMinutes = minutes.value + (seconds.value / 60);
+    const secs = (fixedMaxChrono - countMinutes) * 60
+    const speed = Math.floor(getOfTypedWordsNumber() / (fixedMaxChrono - countMinutes));
     minutes.value = parseInt(secs / 60);
-    seconds.value = (secs / 60 - parseInt(secs / 60)) * 60;
-    return speed;
+    seconds.value = ((secs / 60) - parseInt(secs / 60)) * 60
+    console.log("vitesse", speed, "temps", fixedMaxChrono - countMinutes,);
+    return speed
   } else {
     const countMinutes = minutes.value + seconds.value / 60;
-    return Math.floor(countTypedWords() / countMinutes);
+    return Math.floor(getOfTypedWordsNumber() / countMinutes);
   }
 }
 
-/** affiche le composant ResultComponent */
+// affiche le composant ResultComponent
 function displayResult() {
   resultData.value.precision = getPrecision();
   resultData.value.speed = getSpeed();
@@ -434,27 +334,52 @@ function stopSpaceKeyScrolling(e) {
   }
 }
 
-// lance le time counter à la première frappe
+// lance le counter à la première frappe
 watch(startCounter, () => {
-  if (currentTimerType.value === "countDown") {
-    countDown();
+  // application du type de tymer
+  if (currentTimerType.value === "chrono") {
+    chrono();
   } else {
     timer();
   }
 });
 
 onMounted(() => {
-  // console.log("road With", driveRef.value?.roadWith);
   getWorlds();
 });
+
+
 </script>
+
 <template>
   <div>
-    <div v-if="isGameParamsComponentVisible">
-      <SettingComponent @emitGameSettings="gameSetting" />
+    <div v-if="isGameParamsComponentVisible" class="params-container">
+      <h2>Choisir paramètres du jeux</h2>
+      <div class="radios-groupes-container">
+        <div>
+          <h3>Type de jeux</h3>
+          <input type="radio" id="noBlogking" value="noBlogkingGame" v-model="currentGameType">
+          <label for="noBlogking">Non Bloquant</label>
+          <br>
+          <input type="radio" id="blocking" value="blockingGame" v-model="currentGameType">
+          <label for="blocking">Bloquant</label>
+        </div>
+        <div>
+          <h3>Type de décompte :</h3>
+          <input type="radio" id="free" value="free" v-model="currentTimerType">
+          <label for="free">Libre</label>
+          <br>
+          <input type="radio" id="chrono" value="chrono" v-model="currentTimerType">
+          <label for="chrono">Chrono</label>
+        </div>
+      </div>
+      <p class="start-text-container">
+        <button @click="startGame" style="cursor: pointer;">Valider</button>
+      </p>
     </div>
     <div v-else>
       <div v-if="isResultVisible">
+        <!-- resultData est l'objet contenant la vitesse, la précision et la durée de la session -->
         <ResultComponent :data="resultData" />
       </div>
       <div v-else>
@@ -463,10 +388,7 @@ onMounted(() => {
         </p>
         <div class="container">
           <div class="text-container" ref="textContainersRef">
-            <!-- <DriverComponent :far="far" ref="driveRef", :countLetters="countLetters" /> -->
-          </div>
-          <div class="text-container" ref="textContainersRef">
-            <p v-for="(word, index) in wordsArray" :key="index" :class="{ wordFocus: word.focus }">
+            <p v-for="(word, index) in wordsArray" :key="index">
               <span v-for="(letter, i) in word.letters" :key="i" :class="{
                 spaceClass: letter.char === ' ',
                 letterClass: true,
@@ -483,18 +405,7 @@ onMounted(() => {
           <IconeTime /><br />
           <span>{{ formatTime(minutes) + " : " + formatTime(seconds) }}</span>
         </p>
-        <p class="restar-btn-container">
-          <a href="">
-            <IconRestar />
-          </a>
-        </p>
-        <p class="game-type">
-          {{
-            currentGameType === gameTypes.blocking
-              ? "BLOCKING GAME"
-              : "NO-BLOCKING GAME "
-          }}
-        </p>
+        <p class="game-type">{{ currentGameType === gameTypes.blocking ? "BLOCKING GAME" : "NO-BLOCKING GAME" }} </p>
       </div>
     </div>
   </div>
@@ -532,10 +443,6 @@ onMounted(() => {
   height: fit-content;
   box-shadow: 5px 5px 12px gray;
   background-color: #fff;
-}
-
-.wordFocus {
-  background-color: #00000015;
 }
 
 .spaceClass {
@@ -583,19 +490,74 @@ onMounted(() => {
   margin: 0;
 }
 
+.params-container {
+  padding: 12px;
+  font-family: "Playwrite";
+  font-size: 15px;
+  margin: 50px auto;
+  border-radius: 10%;
+  box-shadow: 5px 5px 12px gray;
+  background-color: #fff;
+  animation: tiper 3s ease-in-out forwards;
+  animation-iteration-count: 1;
+}
+
+.params-container button {
+  font-size: 20px;
+  padding: 5px;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  background-color: #0275d8;
+}
+
+.params-container button:hover {
+  opacity: 0.9;
+}
+
+.radios-groupes-container label {
+  margin-bottom: 15px;
+  /* padding: 5px; */
+  cursor: pointer;
+  /* border: 1px solid #0275d8; */
+}
+
+.radios-groupes-container input {
+  margin-bottom: 10px;
+  /* padding: 5px; */
+  width: 100px;
+  cursor: pointer;
+}
+
+@keyframes tiper {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(-100);
+  }
+
+  40% {
+    transform: translateY(-50px);
+  }
+
+  60% {
+    transform: translateY(0px);
+  }
+
+
+  15% {
+    transform: translateY(70px);
+  }
+}
+
 .result-container h4 {
   text-decoration: double;
 }
 
 .result-container span {
   color: rgb(31, 190, 31);
-}
-
-.restar-btn-container {
-  text-align: center;
-}
-
-.restar-btn-container a:hover {
-  opacity: 0.7;
 }
 </style>
