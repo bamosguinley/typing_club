@@ -125,7 +125,6 @@ async function getWorlds() {
       wordsArray.value.forEach((word) => {
         countLetters.value += word.letters.length;
       });
-      // console.log("countLetters.value", countLetters.value);
     })
     .catch((e) => {
       // s'il n'y a pas la connection
@@ -174,7 +173,6 @@ async function getWorlds() {
       // compter le nombre de lettres
       wordsArray.value.forEach((word) => {
         countLetters.value += word.letters.length;
-        console.log("countLetters.value", countLetters.value);
       });
     });
 }
@@ -299,9 +297,6 @@ function startNoBlockingTyping(e) {
           wordsArray.value[wordCount].focus = true;
       }
       far.value += step.value;
-
-      console.log("wordCount dans levent", wordCount);
-      console.log("count dans l'event", count);
     }
   }
 
@@ -364,11 +359,9 @@ function countDown() {
 function countTypedWords() {
   if (currentTimerType.value === timerTypes.countDown) {
     const nwords = wordCount + 1;
-    console.log("nombre de mots tapés", nwords);
     return (nwords + 1) / 2;
   } else {
     const nwords = (countWords.value + 1) / 2;
-    console.log("nombre de mots tapés", nwords);
     return nwords;
   }
 }
@@ -387,12 +380,6 @@ function getPrecision() {
   });
   // compter les tentatives
   countAttempts = attempts.reduce((acc, curr) => acc + curr, 0);
-  console.log("countLetters.value", countLetters.value);
-  console.log("countAttempts", countAttempts);
-  console.log(
-    "Precision",
-    ((countLetters.value - countAttempts) / countLetters.value) * 100
-  );
   if (Math.floor(((countLetters.value - countAttempts) / countLetters.value) * 100) > 0) {
     return Math.floor(((countLetters.value - countAttempts) / countLetters.value) * 100);
   }
@@ -444,7 +431,6 @@ watch(startCounter, () => {
 });
 
 onMounted(() => {
-  // console.log("road With", driveRef.value?.roadWith);
   getWorlds();
 });
 </script>
