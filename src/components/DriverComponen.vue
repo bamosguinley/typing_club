@@ -13,14 +13,7 @@ const step = ref(0)
 // defineExpose({ step: step.value })
 
 onMounted(() => {
-  // console.log("roadRef", roadRef.value.clientWidth);
-  // console.log("far", props.far);
-  // console.log("countLetters", props.countLetters);
   step.value = (roadRef.value.clientWidth - 50)/ props.countLetters
-  console.log("clientWidth", roadRef.value.clientWidth);
-  console.log("step", step.value);
-  console.log("countLetters", props.countLetters);
-  console.log("countLetters * step", props.countLetters * step.value) ;
   emit("emitStep", step.value)
 })
 
